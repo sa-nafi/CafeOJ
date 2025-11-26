@@ -37,6 +37,9 @@ services:
       SPRING_DATASOURCE_PASSWORD: cafeoj_password
     ports:
       - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - judge-data:/judge-data
     networks:
       - cafeoj-network
     dns:
@@ -47,6 +50,9 @@ services:
 # Named volume for PostgreSQL data persistence
 volumes:
   postgres-data:
+    driver: local
+  judge-data:
+    name: judge-data
     driver: local
 
 # Network for container communication

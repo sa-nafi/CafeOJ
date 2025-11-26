@@ -39,6 +39,8 @@ public class AdminController {
     public String saveProblem(
             @RequestParam String title,
             @RequestParam("descriptionFile") MultipartFile descriptionFile,
+            @RequestParam(defaultValue = "1.0") Double timeLimit,
+            @RequestParam(defaultValue = "256") Integer memoryLimit,
             @RequestParam("sampleInput") MultipartFile sampleInput,
             @RequestParam("sampleOutput") MultipartFile sampleOutput,
             @RequestParam(value = "hiddenInputs", required = false) List<MultipartFile> hiddenInputs,
@@ -48,7 +50,7 @@ public class AdminController {
         String description = new String(descriptionFile.getBytes(), StandardCharsets.UTF_8);
 
         // Save Problem
-        Problem problem = new Problem(title, description);
+        Problem problem = new Problem(title, description, timeLimit, memoryLimit);
         problemRepository.save(problem);
 
         // Save Sample Test Case

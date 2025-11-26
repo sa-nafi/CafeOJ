@@ -23,10 +23,10 @@ public class DataInitializer implements CommandLineRunner {
             admin.setUsername("admin");
             admin.setName("Administrator");
             admin.setEmail("admin@cafeoj.com");
-            admin.setPassword(passwordEncoder.encode("alphazero"));
+            admin.setPassword(passwordEncoder.encode("admin"));
             admin.setRole("ROLE_ADMIN");
             userRepository.save(admin);
-            System.out.println("Default admin user created: admin / alphazero");
+            System.out.println("Default admin user created: admin / admin");
         }
     }
 }

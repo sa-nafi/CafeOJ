@@ -27,16 +27,19 @@ docker compose down
 When you run the Docker setup, the following components are created:
 
 1. **PostgreSQL Container** (`cafeoj-postgres`)
+
    - Database: `cafeoj`
    - User: `cafeoj_user`
    - Password: `cafeoj_password`
    - Port: `5432`
 
 2. **Spring Boot Application Container** (`cafeoj-app`)
+
    - Port: `8080`
    - Profile: `docker`
 
 3. **Persistent Volume** (`postgres-data`)
+
    - Stores all database data
    - Survives container restarts
 
@@ -46,9 +49,8 @@ When you run the Docker setup, the following components are created:
 ## 🌐 Access the Application
 
 Once started, access the application at:
+
 - **Homepage**: http://localhost:8080
-- **Login**: http://localhost:8080/login
-- **Register**: http://localhost:8080/register
 
 ## 📋 Available Commands
 
@@ -84,6 +86,7 @@ docker exec -it cafeoj-postgres psql -U cafeoj_user -d cafeoj
 ```
 
 Common PostgreSQL commands:
+
 ```sql
 \dt              -- List tables
 \d users         -- Describe users table
@@ -119,10 +122,10 @@ If ports 8080 or 5432 are already in use, edit `docker compose.yml`:
 services:
   app:
     ports:
-      - "8081:8080"  # Change external port
+      - "8081:8080" # Change external port
   postgres:
     ports:
-      - "5433:5432"  # Change external port
+      - "5433:5432" # Change external port
 ```
 
 ## 📁 Project Structure

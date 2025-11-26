@@ -1,3 +1,4 @@
+
 package com.ospreys.cafeoj.model;
 
 import jakarta.persistence.*;
@@ -15,11 +16,19 @@ public class Problem {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Column(nullable = false)
+    private Double timeLimit = 1.0; // Seconds
+
+    @Column(nullable = false)
+    private Integer memoryLimit = 256; // MB
+
     public Problem() {}
 
-    public Problem(String title, String description) {
+    public Problem(String title, String description, Double timeLimit, Integer memoryLimit) {
         this.title = title;
         this.description = description;
+        this.timeLimit = timeLimit != null ? timeLimit : 1.0;
+        this.memoryLimit = memoryLimit != null ? memoryLimit : 256;
     }
 
     public Long getId() { return id; }
@@ -31,4 +40,9 @@ public class Problem {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
+    public Double getTimeLimit() { return timeLimit; }
+    public void setTimeLimit(Double timeLimit) { this.timeLimit = timeLimit; }
+
+    public Integer getMemoryLimit() { return memoryLimit; }
+    public void setMemoryLimit(Integer memoryLimit) { this.memoryLimit = memoryLimit; }
 }
