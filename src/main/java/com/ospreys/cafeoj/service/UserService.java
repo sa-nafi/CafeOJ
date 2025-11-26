@@ -11,7 +11,8 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     public User registerUser(String username, String name, String email, String password) {
         if (userRepository.existsByUsername(username)) {
@@ -23,9 +24,13 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public boolean authenticateUser(String username, String password) {
+    public User authenticate(String username, String password) {
         return userRepository.findByUsername(username)
-                .map(user -> passwordEncoder.matches(password, user.getPassword()))
-                .orElse(false);
+                .filter(user -> passwordEncoder.matches(password, user.getPassword()))
+                .orElse(null);
+    }
+
+    public java.util.Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 }
