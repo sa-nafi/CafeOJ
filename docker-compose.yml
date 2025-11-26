@@ -1,0 +1,56 @@
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: cafeoj-postgres
+    environment:
+      POSTGRES_DB: cafeoj
+      POSTGRES_USER: cafeoj_user
+      POSTGRES_PASSWORD: cafeoj_password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - cafeoj-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cafeoj_user -d cafeoj"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Spring Boot Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      network: host
+    container_name: cafeoj-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/cafeoj
+      SPRING_DATASOURCE_USERNAME: cafeoj_user
+      SPRING_DATASOURCE_PASSWORD: cafeoj_password
+    ports:
+      - "8080:8080"
+    networks:
+      - cafeoj-network
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    restart: unless-stopped
+
+# Named volume for PostgreSQL data persistence
+volumes:
+  postgres-data:
+    driver: local
+
+# Network for container communication
+networks:
+  cafeoj-network:
+    driver: bridge
+
