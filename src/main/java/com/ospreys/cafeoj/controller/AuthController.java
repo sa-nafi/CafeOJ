@@ -78,7 +78,7 @@ public class AuthController {
                 new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
                     user.getUsername(), 
                     null, 
-                    java.util.Collections.emptyList()
+                    java.util.Collections.singletonList(new org.springframework.security.core.authority.SimpleGrantedAuthority(user.getRole()))
                 );
             org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(auth);
             securityContextRepository.saveContext(org.springframework.security.core.context.SecurityContextHolder.getContext(), request, null);

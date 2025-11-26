@@ -15,15 +15,11 @@ public class Problem {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(nullable = false)
-    private String difficulty; // EASY, MEDIUM, HARD
-
     public Problem() {}
 
-    public Problem(String title, String description, String difficulty) {
+    public Problem(String title, String description) {
         this.title = title;
         this.description = description;
-        this.difficulty = difficulty;
     }
 
     public Long getId() { return id; }
@@ -35,6 +31,4 @@ public class Problem {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
-    public String getDifficulty() { return difficulty; }
-    public void setDifficulty(String difficulty) { this.difficulty = difficulty; }
 }
