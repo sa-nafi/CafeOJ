@@ -5,7 +5,15 @@ import com.ospreys.cafeoj.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 
 import java.util.Map;
 
@@ -14,8 +22,19 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+
+    private SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
+
     @GetMapping("/")
-    public String index() {
+    public String index(Model model, Principal principal) {
+        if (principal != null) {
+            String username = principal.getName();
+            userService.findByUsername(username).ifPresent(user -> 
+                model.addAttribute("user", user)
+            );
+        }
         return "index";
     }
 
@@ -47,12 +66,23 @@ public class AuthController {
 
     @PostMapping("/api/auth/login")
     @ResponseBody
-    public ResponseEntity<?> login(@RequestBody Map<String, String> payload) {
-        boolean authenticated = userService.authenticateUser(
-            payload.get("username"),
-            payload.get("password")
-        );
-        if (authenticated) {
+    public ResponseEntity<?> login(@RequestBody Map<String, String> payload, HttpServletRequest request) {
+        String username = payload.get("username");
+        String password = payload.get("password");
+
+        User user = userService.authenticate(username, password);
+        
+        if (user != null) {
+            // Manually set authentication in Security Context
+            org.springframework.security.authentication.UsernamePasswordAuthenticationToken auth = 
+                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
+                    user.getUsername(), 
+                    null, 
+                    java.util.Collections.emptyList()
+                );
+            org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(auth);
+            securityContextRepository.saveContext(org.springframework.security.core.context.SecurityContextHolder.getContext(), request, null);
+            
             return ResponseEntity.ok(Map.of("message", "Login successful"));
         }
         return ResponseEntity.badRequest().body(Map.of("error", "Invalid credentials"));

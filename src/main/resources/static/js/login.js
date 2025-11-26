@@ -22,7 +22,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
             messageDiv.textContent = data.message;
             messageDiv.style.display = 'block';
             setTimeout(() => {
-                window.location.href = '/';
+                window.location.href = '/profile';
             }, 1000);
         } else {
             messageDiv.className = 'message error';
