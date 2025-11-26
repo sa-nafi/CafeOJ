@@ -86,39 +86,40 @@ public class JudgeService {
             List<TestCase> testCases = testCaseRepository.findByProblemId(submission.getProblem().getId());
             Problem problem = submission.getProblem();
             
-            for (TestCase testCase : testCases) {
+            for (int i = 0; i < testCases.size(); i++) {
+                TestCase testCase = testCases.get(i);
+                String containerName = "judge-" + submissionId + "-" + i;
+
                 // Write input file
                 Files.write(submissionDir.resolve("input.txt"), testCase.getInput().getBytes(StandardCharsets.UTF_8));
 
                 // Run Container
-                // Limits: Memory in MB, CPU shares? 
-                // We use timeout command inside docker or Process.waitFor
-                
                 ProcessBuilder runPb = new ProcessBuilder(
                         "docker", "run", "--rm",
-                        "-i", // Interactive to pass input? No, we mapped input.txt
+                        "--name", containerName,
                         "-v", "judge-data:/judge-data",
                         "-w", "/judge-data/" + submissionId,
                         "--memory=" + problem.getMemoryLimit() + "m",
                         "--cpus=1.0",
-                        "--network=none", // No internet
+                        "--network=none",
                         "eclipse-temurin:21-jdk-alpine",
                         "sh", "-c", "java Solution < input.txt"
                 );
                 
-                // We need to capture output
                 File outputFile = submissionDir.resolve("output.txt").toFile();
                 runPb.redirectOutput(outputFile);
-                runPb.redirectErrorStream(true); // Capture stderr too? Or separate?
+                runPb.redirectErrorStream(true);
 
                 Process runProcess = runPb.start();
                 
                 // Time Limit Check
-                // Give a small buffer (e.g. +1s) for docker overhead
                 boolean finished = runProcess.waitFor((long)(problem.getTimeLimit() * 1000 + 2000), TimeUnit.MILLISECONDS);
 
                 if (!finished) {
                     runProcess.destroyForcibly();
+                    // Explicitly kill the container
+                    new ProcessBuilder("docker", "rm", "-f", containerName).start().waitFor();
+                    
                     submission.setStatus("TLE");
                     submissionRepository.save(submission);
                     cleanup(submissionDir);
