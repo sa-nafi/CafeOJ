@@ -7,6 +7,7 @@ import com.ospreys.cafeoj.model.User;
 import com.ospreys.cafeoj.repository.ProblemRepository;
 import com.ospreys.cafeoj.repository.SubmissionRepository;
 import com.ospreys.cafeoj.repository.TestCaseRepository;
+import com.ospreys.cafeoj.service.JudgeService;
 import com.ospreys.cafeoj.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,6 +37,9 @@ public class ProblemController {
 
     @Autowired
     private TestCaseRepository testCaseRepository;
+
+    @Autowired
+    private JudgeService judgeService;
 
     @Autowired
     private UserService userService;
@@ -76,7 +80,7 @@ public class ProblemController {
     }
 
     @GetMapping("/problem/{id}")
-    public String viewProblem(@PathVariable Long id, Model model) {
+    public String viewProblem(@PathVariable Long id, Model model, Principal principal) {
         Problem problem = problemRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid problem Id:" + id));
         List<TestCase> testCases = testCaseRepository.findByProblemId(id);
         
@@ -86,8 +90,23 @@ public class ProblemController {
                 .findFirst()
                 .orElse(null);
 
+        Submission lastSubmission = null;
+        if (principal != null) {
+            User user = userService.findByUsername(principal.getName()).orElse(null);
+            if (user != null) {
+                // Ideally we should have a method to findTopByProblemAndUserOrderBySubmissionDateDesc
+                // For now, let's just filter the list (inefficient but works for MVP)
+                List<Submission> submissions = submissionRepository.findByUserId(user.getId());
+                lastSubmission = submissions.stream()
+                        .filter(s -> s.getProblem().getId().equals(id))
+                        .max((s1, s2) -> s1.getSubmissionDate().compareTo(s2.getSubmissionDate()))
+                        .orElse(null);
+            }
+        }
+
         model.addAttribute("problem", problem);
         model.addAttribute("sampleCase", sampleCase);
+        model.addAttribute("lastSubmission", lastSubmission);
         return "problem-detail";
     }
 
@@ -106,7 +125,10 @@ public class ProblemController {
         Submission submission = new Submission(user, problem, "PENDING", code);
         submissionRepository.save(submission);
 
-        return "redirect:/problems"; // Redirect to problem list for now
+        // Trigger Async Judging
+        judgeService.judge(submission);
+
+        return "redirect:/problem/" + id; // Redirect back to problem page to see status
     }
 
     // Simple DTO for the view

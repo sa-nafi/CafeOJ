@@ -101,10 +101,32 @@
         .problem-title {
             font-size: 2rem;
             color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .problem-meta {
+            color: #666;
+            font-size: 0.9rem;
             margin-bottom: 1.5rem;
             border-bottom: 2px solid #eee;
             padding-bottom: 1rem;
         }
+
+        .verdict-badge {
+            display: block;
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        .verdict-pending { background-color: #e0e0e0; color: #333; }
+        .verdict-ac { background-color: #e8f5e9; color: #2e7d32; }
+        .verdict-wa { background-color: #ffebee; color: #c62828; }
+        .verdict-tle { background-color: #fff3e0; color: #e65100; }
+        .verdict-rte { background-color: #f3e5f5; color: #7b1fa2; }
+        .verdict-ce { background-color: #eceff1; color: #455a64; }
 
         .markdown-body {
             line-height: 1.6;
@@ -177,11 +199,28 @@
                 <input type="file" name="solutionFile" accept=".java" required>
                 <button type="submit" class="btn-submit">Submit Code</button>
             </form>
+
+            <!-- Verdict Display (If user has a recent submission) -->
+            <div th:if="${lastSubmission != null}" class="verdict-badge"
+                 th:classappend="${
+                    lastSubmission.status == 'ACCEPTED' ? 'verdict-ac' :
+                    lastSubmission.status == 'PENDING' ? 'verdict-pending' :
+                    lastSubmission.status == 'TLE' ? 'verdict-tle' :
+                    lastSubmission.status == 'RTE' ? 'verdict-rte' :
+                    lastSubmission.status == 'COMPILE_ERROR' ? 'verdict-ce' : 'verdict-wa'
+                 }"
+                 th:text="${lastSubmission.status}">
+                STATUS
+            </div>
         </div>
 
         <!-- Right Column: Problem Content -->
         <div class="problem-content">
             <h1 class="problem-title" th:text="${problem.title}">Problem Title</h1>
+            <div class="problem-meta">
+                Time Limit: <span th:text="${problem.timeLimit}">1.0</span>s &nbsp;|&nbsp;
+                Memory Limit: <span th:text="${problem.memoryLimit}">256</span>MB
+            </div>
             
             <!-- Hidden div to store raw markdown -->
             <div id="raw-markdown" style="display: none;" th:text="${problem.description}"></div>
