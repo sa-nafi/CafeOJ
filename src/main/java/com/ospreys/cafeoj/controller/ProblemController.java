@@ -90,23 +90,23 @@ public class ProblemController {
                 .findFirst()
                 .orElse(null);
 
+        List<Submission> submissionHistory = new ArrayList<>();
         Submission lastSubmission = null;
+
         if (principal != null) {
             User user = userService.findByUsername(principal.getName()).orElse(null);
             if (user != null) {
-                // Ideally we should have a method to findTopByProblemAndUserOrderBySubmissionDateDesc
-                // For now, let's just filter the list (inefficient but works for MVP)
-                List<Submission> submissions = submissionRepository.findByUserId(user.getId());
-                lastSubmission = submissions.stream()
-                        .filter(s -> s.getProblem().getId().equals(id))
-                        .max((s1, s2) -> s1.getSubmissionDate().compareTo(s2.getSubmissionDate()))
-                        .orElse(null);
+                submissionHistory = submissionRepository.findByUserIdAndProblemIdOrderBySubmissionDateDesc(user.getId(), id);
+                if (!submissionHistory.isEmpty()) {
+                    lastSubmission = submissionHistory.get(0);
+                }
             }
         }
 
         model.addAttribute("problem", problem);
         model.addAttribute("sampleCase", sampleCase);
         model.addAttribute("lastSubmission", lastSubmission);
+        model.addAttribute("submissionHistory", submissionHistory);
         return "problem-detail";
     }
 

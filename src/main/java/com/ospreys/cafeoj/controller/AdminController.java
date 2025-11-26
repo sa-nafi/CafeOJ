@@ -26,7 +26,9 @@ public class AdminController {
     private TestCaseRepository testCaseRepository;
 
     @GetMapping("/admin")
-    public String dashboard() {
+    public String dashboard(Model model) {
+        List<Problem> problems = problemRepository.findAll();
+        model.addAttribute("problems", problems);
         return "admin-dashboard";
     }
 
@@ -67,6 +69,65 @@ public class AdminController {
                 if (!input.isEmpty()) {
                     TestCase hiddenCase = new TestCase(problem, input, output, false);
                     testCaseRepository.save(hiddenCase);
+                }
+            }
+        }
+
+        return "redirect:/admin";
+    }
+
+    @PostMapping("/admin/problem/{id}/delete")
+    public String deleteProblem(@org.springframework.web.bind.annotation.PathVariable Long id) {
+        problemRepository.deleteById(id);
+        return "redirect:/admin";
+    }
+
+    @GetMapping("/admin/problem/{id}/edit")
+    public String editProblemForm(@org.springframework.web.bind.annotation.PathVariable Long id, Model model) {
+        Problem problem = problemRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid problem Id:" + id));
+        List<TestCase> testCases = testCaseRepository.findByProblemId(id);
+        model.addAttribute("problem", problem);
+        model.addAttribute("testCases", testCases);
+        return "edit-problem";
+    }
+
+    @PostMapping("/admin/problem/{id}/edit")
+    public String updateProblem(
+            @org.springframework.web.bind.annotation.PathVariable Long id,
+            @RequestParam String title,
+            @RequestParam(required = false) MultipartFile descriptionFile,
+            @RequestParam Double timeLimit,
+            @RequestParam Integer memoryLimit,
+            @RequestParam(required = false) List<Long> deleteTestCaseIds,
+            @RequestParam(value = "newInputs", required = false) List<MultipartFile> newInputs,
+            @RequestParam(value = "newOutputs", required = false) List<MultipartFile> newOutputs
+    ) throws IOException {
+        Problem problem = problemRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid problem Id:" + id));
+        
+        problem.setTitle(title);
+        problem.setTimeLimit(timeLimit);
+        problem.setMemoryLimit(memoryLimit);
+
+        if (descriptionFile != null && !descriptionFile.isEmpty()) {
+            String description = new String(descriptionFile.getBytes(), StandardCharsets.UTF_8);
+            problem.setDescription(description);
+        }
+
+        problemRepository.save(problem);
+
+        // Delete selected test cases
+        if (deleteTestCaseIds != null && !deleteTestCaseIds.isEmpty()) {
+            testCaseRepository.deleteAllById(deleteTestCaseIds);
+        }
+
+        // Add new test cases
+        if (newInputs != null && newOutputs != null && newInputs.size() == newOutputs.size()) {
+            for (int i = 0; i < newInputs.size(); i++) {
+                String input = new String(newInputs.get(i).getBytes(), StandardCharsets.UTF_8);
+                String output = new String(newOutputs.get(i).getBytes(), StandardCharsets.UTF_8);
+                if (!input.isEmpty()) {
+                    TestCase newCase = new TestCase(problem, input, output, false);
+                    testCaseRepository.save(newCase);
                 }
             }
         }
