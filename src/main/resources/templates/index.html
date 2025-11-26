@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -84,12 +83,8 @@
             background-color: #8B6F47;
         }
     </style>
-    <link rel="stylesheet" href="/css/style.css">
 </head>
-
 <body>
-    <div class="container">
-        <h1>☕ Welcome to CafeOJ</h1>
     <nav class="navbar">
         <a href="/" class="navbar-brand">☕ CafeOJ</a>
         <div class="user-info">
@@ -101,10 +96,6 @@
             <div th:unless="${user != null}">
                 <a href="/login" class="nav-link">Login</a>
             </div>
-
-            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">
-                <i>🌙</i>
-            </button>
         </div>
     </nav>
 
@@ -115,13 +106,7 @@
             <br>
             Join our community and start solving problems today!
         </p>
-        <a href="/login" class="btn">Get Started - Login</a>
-        <div style="text-align: center;">
-            <a href="/problems" class="btn">View Problem Set</a>
-        </div>
         <a href="/problems" class="btn">View Problem Set</a>
     </div>
-    <script src="/js/theme.js"></script>
 </body>
-
 </html>
