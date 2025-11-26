@@ -22,6 +22,12 @@ public class Problem {
     @Column(nullable = false)
     private Integer memoryLimit = 256; // MB
 
+    @OneToMany(mappedBy = "problem", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<TestCase> testCases = new java.util.ArrayList<>();
+
+    @OneToMany(mappedBy = "problem", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<Submission> submissions = new java.util.ArrayList<>();
+
     public Problem() {}
 
     public Problem(String title, String description, Double timeLimit, Integer memoryLimit) {

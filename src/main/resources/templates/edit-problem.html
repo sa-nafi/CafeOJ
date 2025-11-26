@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Problem - CafeOJ</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body {
+            display: block;
+            background-color: #f9f9f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .navbar {
+            background-color: #6B4423;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+        .user-info a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 3rem auto;
+            padding: 0 1rem;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+        
+        .form-section {
+            margin-bottom: 2rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        input[type="text"], select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            background-color: white;
+            transition: border-color 0.2s;
+        }
+        
+        input[type="text"]:focus, select:focus {
+            border-color: #6B4423;
+            outline: none;
+        }
+        
+        input[type="file"] {
+            display: block;
+            width: 100%;
+            padding: 0.5rem;
+            background: white;
+            border: 1px dashed #ccc;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
+        .file-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        .btn-submit {
+            background-color: #6B4423;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 2rem;
+            box-shadow: 0 4px 6px rgba(107, 68, 35, 0.2);
+            transition: transform 0.1s;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            background-color: #5C3A1E;
+        }
+        
+        .hint {
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">☕ CafeOJ</a>
+        <div class="user-info">
+            <a href="/profile" th:text="${#authentication.name}">Admin</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Edit Problem</h1>
+        
+        <form th:action="@{/admin/problem/{id}/edit(id=${problem.id})}" method="post" enctype="multipart/form-data">
+            <div class="form-section">
+                <label for="title">Problem Title</label>
+                <input type="text" id="title" name="title" th:value="${problem.title}" required>
+            </div>
+
+            <div class="form-section">
+                <label for="descriptionFile">Problem Statement (.md file)</label>
+                <input type="file" id="descriptionFile" name="descriptionFile" accept=".md">
+                <div class="hint">Upload a new file only if you want to replace the existing description.</div>
+            </div>
+
+            <div class="file-row">
+                <div class="form-section">
+                    <label for="timeLimit">Time Limit (seconds)</label>
+                    <input type="text" id="timeLimit" name="timeLimit" th:value="${problem.timeLimit}" required>
+                </div>
+                <div class="form-section">
+                    <label for="memoryLimit">Memory Limit (MB)</label>
+                    <input type="text" id="memoryLimit" name="memoryLimit" th:value="${problem.memoryLimit}" required>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: #555;">Manage Test Cases</h3>
+
+            <!-- Existing Test Cases -->
+            <div th:if="${!testCases.isEmpty()}" style="margin-bottom: 2rem;">
+                <h4 style="font-size: 1rem; color: #666; margin-bottom: 1rem;">Existing Test Cases</h4>
+                <div th:each="tc : ${testCases}" style="background: white; padding: 1rem; border: 1px solid #eee; border-radius: 6px; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <span style="font-weight: bold; color: #6B4423;" th:text="${tc.example ? 'Sample Case' : 'Hidden Case'}">Case</span>
+                        <span style="color: #888; font-size: 0.9rem; margin-left: 10px;">(ID: <span th:text="${tc.id}">1</span>)</span>
+                        <div style="font-size: 0.85rem; color: #555; margin-top: 5px; white-space: pre-wrap; max-height: 50px; overflow: hidden; text-overflow: ellipsis;" th:text="'Input: ' + ${tc.input}">Input Preview</div>
+                    </div>
+                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; color: #c62828;">
+                        <input type="checkbox" name="deleteTestCaseIds" th:value="${tc.id}"> Delete
+                    </label>
+                </div>
+            </div>
+
+            <!-- New Test Cases -->
+            <h4 style="font-size: 1rem; color: #666; margin-bottom: 1rem;">Add New Test Cases</h4>
+            <div id="hidden-cases-container">
+                <!-- Dynamic rows go here -->
+            </div>
+            
+            <button type="button" class="btn-add" onclick="addHiddenCase()" style="background-color: transparent; color: #6B4423; border: 2px dashed #6B4423; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; width: 100%; transition: all 0.2s; margin-bottom: 1rem;">+ Add New Test Case</button>
+
+
+            <button type="submit" class="btn-submit">Save Changes</button>
+            <a href="/admin" style="display: block; text-align: center; margin-top: 1rem; color: #666; text-decoration: none;">Cancel</a>
+        </form>
+    </div>
+    </div>
+
+    <script>
+        function addHiddenCase() {
+            const container = document.getElementById('hidden-cases-container');
+            const index = container.children.length + 1;
+            
+            const div = document.createElement('div');
+            div.style.cssText = 'background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 1rem; position: relative;';
+            div.innerHTML = `
+                <span style="font-weight: 600; color: #6B4423; margin-bottom: 1rem; display: block;">New Case #${index}</span>
+                <button type="button" onclick="this.parentElement.remove()" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: #999; cursor: pointer; font-size: 0.9rem;">Remove</button>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #555;">Input File</label>
+                        <input type="file" name="newInputs" accept=".txt" required style="display: block; width: 100%; padding: 0.5rem; background: white; border: 1px dashed #ccc; border-radius: 6px;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #555;">Output File</label>
+                        <input type="file" name="newOutputs" accept=".txt" required style="display: block; width: 100%; padding: 0.5rem; background: white; border: 1px dashed #ccc; border-radius: 6px;">
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+        }
+    </script>
+</body>
+</html>

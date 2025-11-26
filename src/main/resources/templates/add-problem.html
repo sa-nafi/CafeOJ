@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +12,7 @@
             background-color: #f9f9f9;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
         /* Navbar Styles (Consistent with other pages) */
         .navbar {
             background-color: #6B4423;
@@ -20,14 +21,16 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
         .navbar-brand {
             font-size: 1.5rem;
             font-weight: bold;
             color: white;
             text-decoration: none;
         }
+
         .user-info a {
             color: white;
             text-decoration: none;
@@ -40,25 +43,26 @@
             margin: 3rem auto;
             padding: 0 1rem;
         }
-        
+
         h1 {
             color: #333;
             margin-bottom: 2rem;
             font-weight: 600;
         }
-        
+
         .form-section {
             margin-bottom: 2rem;
         }
-        
+
         label {
             display: block;
             margin-bottom: 0.5rem;
             font-weight: 500;
             color: #555;
         }
-        
-        input[type="text"], select {
+
+        input[type="text"],
+        select {
             width: 100%;
             padding: 0.8rem;
             border: 1px solid #ddd;
@@ -67,12 +71,13 @@
             background-color: white;
             transition: border-color 0.2s;
         }
-        
-        input[type="text"]:focus, select:focus {
+
+        input[type="text"]:focus,
+        select:focus {
             border-color: #6B4423;
             outline: none;
         }
-        
+
         input[type="file"] {
             display: block;
             width: 100%;
@@ -82,29 +87,29 @@
             border-radius: 6px;
             cursor: pointer;
         }
-        
+
         .test-case-group {
             background: white;
             padding: 1.5rem;
             border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
             margin-bottom: 1rem;
             position: relative;
         }
-        
+
         .test-case-title {
             font-weight: 600;
             color: #6B4423;
             margin-bottom: 1rem;
             display: block;
         }
-        
+
         .file-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1.5rem;
         }
-        
+
         .btn-add {
             background-color: transparent;
             color: #6B4423;
@@ -116,12 +121,12 @@
             width: 100%;
             transition: all 0.2s;
         }
-        
+
         .btn-add:hover {
             background-color: #6B4423;
             color: white;
         }
-        
+
         .btn-submit {
             background-color: #6B4423;
             color: white;
@@ -136,12 +141,12 @@
             box-shadow: 0 4px 6px rgba(107, 68, 35, 0.2);
             transition: transform 0.1s;
         }
-        
+
         .btn-submit:hover {
             transform: translateY(-2px);
             background-color: #5C3A1E;
         }
-        
+
         .btn-remove {
             position: absolute;
             top: 1rem;
@@ -152,11 +157,13 @@
             cursor: pointer;
             font-size: 0.9rem;
         }
+
         .btn-remove:hover {
             color: #c62828;
         }
     </style>
 </head>
+
 <body>
     <nav class="navbar">
         <a href="/" class="navbar-brand">☕ CafeOJ</a>
@@ -168,7 +175,7 @@
 
     <div class="container">
         <h1>Create New Problem</h1>
-        
+
         <form action="/admin/problem/save" method="post" enctype="multipart/form-data">
             <div class="form-section">
                 <label for="title">Problem Title</label>
@@ -178,6 +185,17 @@
             <div class="form-section">
                 <label for="descriptionFile">Problem Statement (.md file)</label>
                 <input type="file" id="descriptionFile" name="descriptionFile" accept=".md" required>
+            </div>
+
+            <div class="file-row">
+                <div class="form-section">
+                    <label for="timeLimit">Time Limit (seconds)</label>
+                    <input type="text" id="timeLimit" name="timeLimit" value="1.0" required>
+                </div>
+                <div class="form-section">
+                    <label for="memoryLimit">Memory Limit (MB)</label>
+                    <input type="text" id="memoryLimit" name="memoryLimit" value="256" required>
+                </div>
             </div>
 
 
@@ -200,7 +218,7 @@
             <div id="hidden-cases-container">
                 <!-- Dynamic rows go here -->
             </div>
-            
+
             <button type="button" class="btn-add" onclick="addHiddenCase()">+ Add Hidden Test Case</button>
 
             <button type="submit" class="btn-submit">Publish Problem</button>
@@ -211,7 +229,7 @@
         function addHiddenCase() {
             const container = document.getElementById('hidden-cases-container');
             const index = container.children.length + 1;
-            
+
             const div = document.createElement('div');
             div.className = 'test-case-group';
             div.innerHTML = `
@@ -232,4 +250,5 @@
         }
     </script>
 </body>
+
 </html>
