@@ -24,12 +24,16 @@ public class Submission {
     @Column(nullable = false)
     private LocalDateTime submissionDate;
 
+    @Column(columnDefinition = "TEXT")
+    private String code;
+
     public Submission() {}
 
-    public Submission(User user, Problem problem, String status) {
+    public Submission(User user, Problem problem, String status, String code) {
         this.user = user;
         this.problem = problem;
         this.status = status;
+        this.code = code;
         this.submissionDate = LocalDateTime.now();
     }
 
@@ -47,4 +51,7 @@ public class Submission {
 
     public LocalDateTime getSubmissionDate() { return submissionDate; }
     public void setSubmissionDate(LocalDateTime submissionDate) { this.submissionDate = submissionDate; }
+
+    public String getCode() { return code; }
+    public void setCode(String code) { this.code = code; }
 }
