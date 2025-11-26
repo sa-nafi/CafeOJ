@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CafeOJ - Online Judge</title>
+<<<<<<< Updated upstream
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -49,16 +51,50 @@
             background-color: #8B6F47;
         }
     </style>
+=======
+    <link rel="stylesheet" href="/css/style.css">
+>>>>>>> Stashed changes
 </head>
+
 <body>
+<<<<<<< Updated upstream
     <div class="container">
         <h1>☕ Welcome to CafeOJ</h1>
+=======
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">☕ CafeOJ</a>
+        <div class="user-info">
+            <!-- Show if user is logged in -->
+            <div th:if="${user != null}">
+                <a href="/profile" class="nav-link" th:text="${user.username}">Username</a>
+            </div>
+            <!-- Show if user is NOT logged in -->
+            <div th:unless="${user != null}">
+                <a href="/login" class="nav-link">Login</a>
+            </div>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+                <i>🌙</i>
+            </button>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <h1>Welcome to CafeOJ</h1>
+>>>>>>> Stashed changes
         <p>
             CafeOJ is an online judge platform designed to help you practice
             and improve your programming skills. Solve challenging problems,
             submit your solutions, and track your progress!
         </p>
+<<<<<<< Updated upstream
         <a href="/login" class="btn">Get Started - Login</a>
+=======
+        <div style="text-align: center;">
+            <a href="/problems" class="btn">View Problem Set</a>
+        </div>
+>>>>>>> Stashed changes
     </div>
+    <script src="/js/theme.js"></script>
 </body>
+
 </html>

@@ -1,15 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - CafeOJ</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <body>
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">☕ CafeOJ</a>
+        <div class="user-info">
+            <a href="/register" class="nav-link">Register</a>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+                <i>🌙</i>
+            </button>
+        </div>
+    </nav>
+
     <div class="container">
-        <h1>CafeOJ</h1>
-        <p class="subtitle">Welcome back!</p>
+        <h2 class="subtitle">Welcome back!</h2>
         <form id="loginForm">
             <div class="form-group">
                 <label for="username">Username</label>
@@ -23,9 +34,11 @@
         </form>
         <div id="message" class="message"></div>
         <div class="switch-link">
-            Don't have an account? <a href="/register">Register here</a>
+            Don't have an account? <a href="/register">Register</a>
         </div>
     </div>
+    <script src="/js/theme.js"></script>
     <script src="/js/login.js"></script>
 </body>
+
 </html>

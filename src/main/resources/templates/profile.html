@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile - CafeOJ</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <nav class="navbar">
+    <a href="/" class="navbar-brand">☕ CafeOJ</a>
+    <div class="user-info">
+      <span class="username" th:text="${user.username}">Username</span>
+      <a href="/logout" class="logout-btn">Logout</a>
+      <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+        <i>🌙</i>
+      </button>
+    </div>
+  </nav>
+
+  <div class="dashboard-container">
+    <div class="profile-card">
+      <div class="profile-header">
+        <h2>Profile Dashboard</h2>
+      </div>
+
+      <div class="user-details">
+        <div class="detail-label">Name:</div>
+        <div th:text="${user.name}">User Name</div>
+
+        <div class="detail-label">Email:</div>
+        <div th:text="${user.email}">user@example.com</div>
+      </div>
+
+      <h3>Statistics</h3>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-value" th:text="${problemsSolved}">0</span>
+          <span class="stat-label">Problems Solved</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value" th:text="${totalProblems}">0</span>
+          <span class="stat-label">Total Problems</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="/js/theme.js"></script>
+</body>
+
+</html>
