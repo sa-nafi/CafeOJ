@@ -7,197 +7,54 @@
     <link rel="stylesheet" href="/css/style.css">
     <!-- Marked.js for Markdown rendering -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <style>
-        body {
-            display: block;
-            background-color: #f9f9f9;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        .navbar {
-            background-color: #6B4423;
-            color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: white;
-            text-decoration: none;
-        }
-        .user-info a {
-            color: white;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .main-container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 2rem;
-        }
-
-        /* Left Column: Submission */
-        .submission-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            height: fit-content;
-            position: sticky;
-            top: 2rem;
-        }
-
-        .submission-card h3 {
-            color: #6B4423;
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
-        }
-
-        .file-upload-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: #555;
-        }
-
-        input[type="file"] {
-            width: 100%;
-            margin-bottom: 1rem;
-        }
-
-        .btn-submit {
-            background-color: #6B4423;
-            color: white;
-            padding: 0.8rem 1.5rem;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            transition: background-color 0.2s;
-        }
-
-        .btn-submit:hover {
-            background-color: #5C3A1E;
-        }
-
-        /* Right Column: Problem Content */
-        .problem-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        .problem-title {
-            font-size: 2rem;
-            color: #333;
-            margin-bottom: 0.5rem;
-        }
-
-        .problem-meta {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 1.5rem;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 1rem;
-        }
-
-        .verdict-badge {
-            display: block;
-            margin-top: 1rem;
-            padding: 1rem;
-            border-radius: 6px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-        .verdict-pending { background-color: #e0e0e0; color: #333; }
-        .verdict-ac { background-color: #e8f5e9; color: #2e7d32; }
-        .verdict-wa { background-color: #ffebee; color: #c62828; }
-        .verdict-tle { background-color: #fff3e0; color: #e65100; }
-        .verdict-rte { background-color: #f3e5f5; color: #7b1fa2; }
-        .verdict-ce { background-color: #eceff1; color: #455a64; }
-
-        .markdown-body {
-            line-height: 1.6;
-            color: #333;
-        }
-        
-        .markdown-body h1, .markdown-body h2, .markdown-body h3 {
-            margin-top: 1.5rem;
-            margin-bottom: 1rem;
-            color: #444;
-        }
-
-        .markdown-body code {
-            background-color: #f5f5f5;
-            padding: 0.2rem 0.4rem;
-            border-radius: 4px;
-            font-family: monospace;
-        }
-
-        .markdown-body pre {
-            background-color: #f5f5f5;
-            padding: 1rem;
-            border-radius: 6px;
-            overflow-x: auto;
-        }
-
-        .sample-section {
-            margin-top: 3rem;
-            border-top: 1px solid #eee;
-            padding-top: 2rem;
-        }
-
-        .sample-box {
-            background-color: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 6px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            font-family: monospace;
-            white-space: pre-wrap;
-        }
-
-        .sample-label {
-            font-weight: bold;
-            color: #555;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-    </style>
 </head>
 <body>
     <nav class="navbar">
-        <a href="/" class="navbar-brand">☕ CafeOJ</a>
+        <a href="/" class="navbar-brand">⚡ CafeOJ</a>
         <div class="user-info">
             <div th:if="${#authentication.name != 'anonymousUser'}">
-                <a href="/profile" th:text="${#authentication.name}">Username</a>
+                <a href="/profile" class="nav-link" th:text="${#authentication.name}">Username</a>
             </div>
             <div th:unless="${#authentication.name != 'anonymousUser'}">
-                <a href="/login" style="color: white; text-decoration: none;">Login</a>
+                <a href="/login" class="nav-link">Login</a>
             </div>
         </div>
     </nav>
 
     <div class="main-container">
-        <!-- Left Column: Submission -->
+        <!-- Left Column: Problem Content -->
+        <div class="problem-content">
+            <h1 class="problem-title" th:text="${problem.title}">Problem Title</h1>
+            <div class="problem-meta">
+                Time Limit: <span th:text="${problem.timeLimit}">1.0</span>s &nbsp;|&nbsp;
+                Memory Limit: <span th:text="${problem.memoryLimit}">256</span>MB
+            </div>
+            
+            <!-- Hidden div to store raw markdown -->
+            <div id="raw-markdown" class="hidden" th:text="${problem.description}"></div>
+            
+            <!-- Div where markdown will be rendered -->
+            <div id="rendered-content" class="markdown-body"></div>
+
+            <!-- Sample Test Cases -->
+            <div class="sample-section" th:if="${sampleCase != null}">
+                <h3>Sample Test Case</h3>
+                
+                <span class="sample-label">Input</span>
+                <div class="sample-box" th:text="${sampleCase.input}"></div>
+                
+                <span class="sample-label">Output</span>
+                <div class="sample-box" th:text="${sampleCase.expectedOutput}"></div>
+            </div>
+        </div>
+
+        <!-- Right Column: Submission -->
         <div class="submission-card">
             <h3>Submit Solution</h3>
             <form th:action="@{/problem/{id}/submit(id=${problem.id})}" method="post" enctype="multipart/form-data">
                 <label class="file-upload-label">Upload Java File (.java)</label>
                 <input type="file" name="solutionFile" accept=".java" required>
-                <button type="submit" class="btn-submit">Submit Code</button>
+                <button type="submit" class="btn-submit mt-1">Submit Code</button>
             </form>
 
             <!-- Verdict Display (If user has a recent submission) -->
@@ -214,13 +71,13 @@
             </div>
 
             <!-- Submission History -->
-            <div th:if="${!submissionHistory.isEmpty()}" style="margin-top: 2rem; border-top: 1px solid #eee; padding-top: 1rem;">
-                <h4 style="color: #555; margin-bottom: 0.5rem;">History</h4>
-                <div style="max-height: 300px; overflow-y: auto;">
-                    <table style="width: 100%; font-size: 0.9rem; border-collapse: collapse;">
-                        <tr th:each="sub : ${submissionHistory}" style="border-bottom: 1px solid #f0f0f0;">
-                            <td style="padding: 8px 0;">
-                                <span th:text="${#temporals.format(sub.submissionDate, 'MMM dd HH:mm')}" style="color: #888; font-size: 0.8rem; display: block;">Date</span>
+            <div th:if="${!submissionHistory.isEmpty()}" class="submission-history">
+                <h4>History</h4>
+                <div class="submission-history-list">
+                    <table class="submission-history-table">
+                        <tr th:each="sub : ${submissionHistory}">
+                            <td>
+                                <span class="submission-date" th:text="${#temporals.format(sub.submissionDate, 'MMM dd HH:mm')}">Date</span>
                                 <span th:text="${sub.status}" 
                                       th:style="${'font-weight: bold; color: ' + 
                                         (sub.status == 'ACCEPTED' ? '#2e7d32' : 
@@ -234,32 +91,6 @@
                         </tr>
                     </table>
                 </div>
-            </div>
-        </div>
-
-        <!-- Right Column: Problem Content -->
-        <div class="problem-content">
-            <h1 class="problem-title" th:text="${problem.title}">Problem Title</h1>
-            <div class="problem-meta">
-                Time Limit: <span th:text="${problem.timeLimit}">1.0</span>s &nbsp;|&nbsp;
-                Memory Limit: <span th:text="${problem.memoryLimit}">256</span>MB
-            </div>
-            
-            <!-- Hidden div to store raw markdown -->
-            <div id="raw-markdown" style="display: none;" th:text="${problem.description}"></div>
-            
-            <!-- Div where markdown will be rendered -->
-            <div id="rendered-content" class="markdown-body"></div>
-
-            <!-- Sample Test Cases -->
-            <div class="sample-section" th:if="${sampleCase != null}">
-                <h3>Sample Test Case</h3>
-                
-                <span class="sample-label">Input</span>
-                <div class="sample-box" th:text="${sampleCase.input}"></div>
-                
-                <span class="sample-label">Output</span>
-                <div class="sample-box" th:text="${sampleCase.expectedOutput}"></div>
             </div>
         </div>
     </div>

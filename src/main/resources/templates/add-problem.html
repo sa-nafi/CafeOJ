@@ -6,175 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Problem - CafeOJ</title>
     <link rel="stylesheet" href="/css/style.css">
-    <style>
-        body {
-            display: block;
-            background-color: #f9f9f9;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        /* Navbar Styles (Consistent with other pages) */
-        .navbar {
-            background-color: #6B4423;
-            color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: white;
-            text-decoration: none;
-        }
-
-        .user-info a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        /* Main Content Styles */
-        .container {
-            max-width: 800px;
-            margin: 3rem auto;
-            padding: 0 1rem;
-        }
-
-        h1 {
-            color: #333;
-            margin-bottom: 2rem;
-            font-weight: 600;
-        }
-
-        .form-section {
-            margin-bottom: 2rem;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: #555;
-        }
-
-        input[type="text"],
-        select {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 1rem;
-            background-color: white;
-            transition: border-color 0.2s;
-        }
-
-        input[type="text"]:focus,
-        select:focus {
-            border-color: #6B4423;
-            outline: none;
-        }
-
-        input[type="file"] {
-            display: block;
-            width: 100%;
-            padding: 0.5rem;
-            background: white;
-            border: 1px dashed #ccc;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .test-case-group {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            margin-bottom: 1rem;
-            position: relative;
-        }
-
-        .test-case-title {
-            font-weight: 600;
-            color: #6B4423;
-            margin-bottom: 1rem;
-            display: block;
-        }
-
-        .file-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
-
-        .btn-add {
-            background-color: transparent;
-            color: #6B4423;
-            border: 2px dashed #6B4423;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            width: 100%;
-            transition: all 0.2s;
-        }
-
-        .btn-add:hover {
-            background-color: #6B4423;
-            color: white;
-        }
-
-        .btn-submit {
-            background-color: #6B4423;
-            color: white;
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 6px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 2rem;
-            box-shadow: 0 4px 6px rgba(107, 68, 35, 0.2);
-            transition: transform 0.1s;
-        }
-
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            background-color: #5C3A1E;
-        }
-
-        .btn-remove {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
-            border: none;
-            color: #999;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .btn-remove:hover {
-            color: #c62828;
-        }
-    </style>
 </head>
 
 <body>
     <nav class="navbar">
-        <a href="/" class="navbar-brand">☕ CafeOJ</a>
+        <a href="/" class="navbar-brand">⚡ CafeOJ</a>
         <div class="user-info">
             <!-- Assuming user is logged in as admin -->
-            <a href="/profile" th:text="${#authentication.name}">Admin</a>
+            <a href="/profile" class="nav-link" th:text="${#authentication.name}">Admin</a>
         </div>
     </nav>
 
-    <div class="container">
-        <h1>Create New Problem</h1>
+    <div class="container-narrow">
+        <h1 class="page-title">Create New Problem</h1>
 
         <form action="/admin/problem/save" method="post" enctype="multipart/form-data">
             <div class="form-section">
@@ -198,8 +42,7 @@
                 </div>
             </div>
 
-
-            <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: #555;">Test Cases</h3>
+            <h3 class="mt-2 mb-1">Test Cases</h3>
 
             <div class="test-case-group">
                 <span class="test-case-title">Sample Case (Visible)</span>
@@ -221,7 +64,7 @@
 
             <button type="button" class="btn-add" onclick="addHiddenCase()">+ Add Hidden Test Case</button>
 
-            <button type="submit" class="btn-submit">Publish Problem</button>
+            <button type="submit" class="btn-submit mt-2">Publish Problem</button>
         </form>
     </div>
 

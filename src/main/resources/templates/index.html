@@ -5,88 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CafeOJ - Online Judge</title>
     <link rel="stylesheet" href="/css/style.css">
-    <style>
-        /* Override/Add styles for homepage */
-        body {
-            display: block; /* Reset flex display from style.css */
-            background-color: #f4f4f4;
-        }
-        
-        .navbar {
-            background-color: #6B4423;
-            color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: white;
-            text-decoration: none;
-        }
-        
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .nav-link {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        
-        .nav-link:hover {
-            text-decoration: underline;
-        }
-        
-        .hero {
-            text-align: center;
-            padding: 4rem 2rem;
-            background: white;
-            margin: 2rem auto;
-            max-width: 800px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-        
-        .hero h1 {
-            color: #6B4423;
-            font-size: 3em;
-            margin-bottom: 20px;
-        }
-        
-        .hero p {
-            font-size: 1.2em;
-            line-height: 1.6;
-            color: #555;
-            margin-bottom: 30px;
-        }
-        
-        .btn {
-            display: inline-block;
-            padding: 15px 40px;
-            background-color: #6B4423;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            font-size: 1.1em;
-            transition: background-color 0.3s;
-        }
-        
-        .btn:hover {
-            background-color: #8B6F47;
-        }
-    </style>
 </head>
 <body>
     <nav class="navbar">
-        <a href="/" class="navbar-brand">☕ CafeOJ</a>
+        <a href="/" class="navbar-brand">⚡ CafeOJ</a>
         <div class="user-info">
             <!-- Show if user is logged in -->
             <div th:if="${user != null}">
@@ -100,11 +22,9 @@
     </nav>
 
     <div class="hero">
-        <h1>Welcome to CafeOJ</h1>
+        <h2>The place for problem solving</h2>
         <p>
-            The best place to practice your coding skills while enjoying a virtual cup of coffee.
-            <br>
-            Join our community and start solving problems today!
+            CafeOJ is where programmers solve algorithm and data structure challenges and become a part of an awesome community.
         </p>
         <a href="/problems" class="btn">View Problem Set</a>
     </div>
