@@ -18,6 +18,7 @@
         <h1 class="page-title">Edit Problem</h1>
         
         <form th:action="@{/admin/problem/{id}/edit(id=${problem.id})}" method="post" enctype="multipart/form-data">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <div class="form-section">
                 <label for="title">Problem Title</label>
                 <input type="text" id="title" name="title" th:value="${problem.title}" required>

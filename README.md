@@ -9,6 +9,32 @@ A Spring Boot-based online judge platform for competitive programming.
 - Docker (20.10+)
 - Docker Compose (2.0+)
 
+### Setup Environment Variables
+
+Before starting, create your environment file:
+
+```bash
+# Copy the example environment file
+cp .env.example .env
+
+# Edit .env with your preferred values (optional for development)
+nano .env
+```
+
+The `.env` file contains sensitive configuration:
+
+```bash
+# Database credentials
+POSTGRES_DB=cafeoj
+POSTGRES_USER=cafeoj_user
+POSTGRES_PASSWORD=your_secure_password
+
+# Admin account password (created on first startup)
+ADMIN_PASSWORD=your_admin_password
+```
+
+> ⚠️ **Important**: Never commit `.env` to version control. It's already in `.gitignore`.
+
 ### Run Using Docker Compose
 
 ```bash
@@ -28,15 +54,16 @@ When you run the Docker setup, the following components are created:
 
 1. **PostgreSQL Container** (`cafeoj-postgres`)
 
-   - Database: `cafeoj`
-   - User: `cafeoj_user`
-   - Password: `cafeoj_password`
+   - Database: configured via `POSTGRES_DB`
+   - User: configured via `POSTGRES_USER`
+   - Password: configured via `POSTGRES_PASSWORD`
    - Port: `5432`
 
 2. **Spring Boot Application Container** (`cafeoj-app`)
 
    - Port: `8080`
    - Profile: `docker`
+   - Admin user created with password from `ADMIN_PASSWORD`
 
 3. **Persistent Volume** (`postgres-data`)
 
@@ -98,20 +125,23 @@ SELECT * FROM users;  -- Query users
 
 ### Environment Variables
 
-You can customize the setup by creating a `.env` file:
+All sensitive configuration is managed via the `.env` file. Available variables:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `POSTGRES_DB` | Database name | `cafeoj` |
+| `POSTGRES_USER` | Database username | `cafeoj_user` |
+| `POSTGRES_PASSWORD` | Database password | *(required)* |
+| `ADMIN_PASSWORD` | Admin account password | `admin` |
+
+To customize:
 
 ```bash
+# Create .env from template
 cp .env.example .env
-```
 
-Then edit `.env` with your preferred values:
-
-```bash
-POSTGRES_DB=cafeoj
-POSTGRES_USER=your_username
-POSTGRES_PASSWORD=your_password
-SPRING_PROFILES_ACTIVE=docker
-SERVER_PORT=8080
+# Edit with your values
+nano .env
 ```
 
 ### Port Conflicts
@@ -150,12 +180,13 @@ CafeOJ/
 
 For production deployment:
 
-1. **Change default passwords** in `docker compose.yml`
-2. **Use secrets management** (Docker secrets, Kubernetes secrets, etc.)
-3. **Enable HTTPS** with proper SSL certificates
-4. **Configure firewall** rules
-5. **Set up monitoring** and alerting
-6. **Implement backup** strategy for the database
+1. **Change default passwords** in your `.env` file (never use defaults in production)
+2. **Keep `.env` secret** - it's gitignored and should never be committed
+3. **Use secrets management** (Docker secrets, Kubernetes secrets, etc.) for production
+4. **Enable HTTPS** with proper SSL certificates
+5. **Configure firewall** rules
+6. **Set up monitoring** and alerting
+7. **Implement backup** strategy for the database
 
 ## 📚 Additional Documentation
 

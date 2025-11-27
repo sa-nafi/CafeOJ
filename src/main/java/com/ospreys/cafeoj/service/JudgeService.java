@@ -33,6 +33,7 @@ public class JudgeService {
     public void judge(Submission submission) {
         long submissionId = submission.getId();
         Path submissionDir = Paths.get(JUDGE_DIR, String.valueOf(submissionId));
+        String containerName = "judge-" + submissionId;
 
         try {
             // 1. Setup Workspace
@@ -47,19 +48,14 @@ public class JudgeService {
             
             Files.write(submissionDir.resolve("Solution.java"), code.getBytes(StandardCharsets.UTF_8));
 
-            // 2. Compile
-            // We use a docker container to compile to ensure environment consistency
-            // But for simplicity/speed in this MVP, we can try to compile in the same container if javac is available,
-            // OR spin up a container. Let's spin up a container for compilation to be safe.
-            
-            // Actually, for MVP, let's run javac inside the execution container for each test case? 
-            // No, compile once, run multiple times.
-            
-            // Let's compile using a docker container
+            // 2. Compile using a docker container
             ProcessBuilder compilePb = new ProcessBuilder(
                     "docker", "run", "--rm",
                     "-v", "judge-data:/judge-data",
                     "-w", "/judge-data/" + submissionId,
+                    "--network=none",
+                    "--cap-drop=ALL",
+                    "--security-opt=no-new-privileges",
                     "eclipse-temurin:21-jdk-alpine",
                     "javac", "Solution.java"
             );
@@ -82,83 +78,115 @@ public class JudgeService {
                 return;
             }
 
-            // 3. Run Test Cases
+            // 3. Start a single container for all test cases
             List<TestCase> testCases = testCaseRepository.findByProblemId(submission.getProblem().getId());
             Problem problem = submission.getProblem();
             
-            for (int i = 0; i < testCases.size(); i++) {
-                TestCase testCase = testCases.get(i);
-                String containerName = "judge-" + submissionId + "-" + i;
-
-                // Write input file
-                Files.write(submissionDir.resolve("input.txt"), testCase.getInput().getBytes(StandardCharsets.UTF_8));
-
-                // Run Container
-                ProcessBuilder runPb = new ProcessBuilder(
-                        "docker", "run", "--rm",
-                        "--name", containerName,
-                        "-v", "judge-data:/judge-data",
-                        "-w", "/judge-data/" + submissionId,
-                        "--memory=" + problem.getMemoryLimit() + "m",
-                        "--cpus=1.0",
-                        "--network=none",
-                        "eclipse-temurin:21-jdk-alpine",
-                        "sh", "-c", "java Solution < input.txt"
-                );
-                
-                File outputFile = submissionDir.resolve("output.txt").toFile();
-                runPb.redirectOutput(outputFile);
-                runPb.redirectErrorStream(true);
-
-                Process runProcess = runPb.start();
-                
-                // Time Limit Check
-                boolean finished = runProcess.waitFor((long)(problem.getTimeLimit() * 1000 + 2000), TimeUnit.MILLISECONDS);
-
-                if (!finished) {
-                    runProcess.destroyForcibly();
-                    // Explicitly kill the container
-                    new ProcessBuilder("docker", "rm", "-f", containerName).start().waitFor();
-                    
-                    submission.setStatus("TLE");
-                    submissionRepository.save(submission);
-                    cleanup(submissionDir);
-                    return;
-                }
-
-                if (runProcess.exitValue() != 0) {
-                    submission.setStatus("RTE");
-                    submissionRepository.save(submission);
-                    cleanup(submissionDir);
-                    return;
-                }
-
-                // Compare Output
-                String actualOutput = Files.readString(outputFile.toPath(), StandardCharsets.UTF_8).trim();
-                String expectedOutput = testCase.getExpectedOutput().trim();
-
-                // Normalize line endings
-                actualOutput = actualOutput.replace("\r\n", "\n");
-                expectedOutput = expectedOutput.replace("\r\n", "\n");
-
-                if (!actualOutput.equals(expectedOutput)) {
-                    submission.setStatus("WA");
-                    submissionRepository.save(submission);
-                    cleanup(submissionDir);
-                    return;
-                }
+            // Start long-running container
+            ProcessBuilder startContainerPb = new ProcessBuilder(
+                    "docker", "run", "-d",
+                    "--name", containerName,
+                    "-v", "judge-data:/judge-data",
+                    "-w", "/judge-data/" + submissionId,
+                    "--memory=" + problem.getMemoryLimit() + "m",
+                    "--cpus=1.0",
+                    "--network=none",
+                    "--pids-limit=50",
+                    "--cap-drop=ALL",
+                    "--read-only",
+                    "--security-opt=no-new-privileges",
+                    "eclipse-temurin:21-jdk-alpine",
+                    "tail", "-f", "/dev/null"
+            );
+            startContainerPb.redirectErrorStream(true);
+            Process startProcess = startContainerPb.start();
+            boolean started = startProcess.waitFor(30, TimeUnit.SECONDS);
+            
+            if (!started || startProcess.exitValue() != 0) {
+                submission.setStatus("INTERNAL_ERROR");
+                submissionRepository.save(submission);
+                cleanup(submissionDir);
+                return;
             }
 
-            // If all passed
-            submission.setStatus("ACCEPTED");
-            submissionRepository.save(submission);
+            // 4. Run each test case using docker exec
+            try {
+                for (int i = 0; i < testCases.size(); i++) {
+                    TestCase testCase = testCases.get(i);
+
+                    // Write input file
+                    Files.write(submissionDir.resolve("input.txt"), testCase.getInput().getBytes(StandardCharsets.UTF_8));
+
+                    // Execute test in the running container
+                    ProcessBuilder execPb = new ProcessBuilder(
+                            "docker", "exec", containerName,
+                            "sh", "-c", "java Solution < input.txt"
+                    );
+                    
+                    File outputFile = submissionDir.resolve("output.txt").toFile();
+                    execPb.redirectOutput(outputFile);
+                    execPb.redirectErrorStream(true);
+
+                    Process execProcess = execPb.start();
+                    
+                    // Time Limit Check
+                    boolean finished = execProcess.waitFor((long)(problem.getTimeLimit() * 1000 + 500), TimeUnit.MILLISECONDS);
+
+                    if (!finished) {
+                        execProcess.destroyForcibly();
+                        submission.setStatus("TLE");
+                        submissionRepository.save(submission);
+                        return;
+                    }
+
+                    if (execProcess.exitValue() != 0) {
+                        submission.setStatus("RTE");
+                        submissionRepository.save(submission);
+                        return;
+                    }
+
+                    // Compare Output
+                    String actualOutput = Files.readString(outputFile.toPath(), StandardCharsets.UTF_8).trim();
+                    String expectedOutput = testCase.getExpectedOutput().trim();
+
+                    // Normalize line endings
+                    actualOutput = actualOutput.replace("\r\n", "\n");
+                    expectedOutput = expectedOutput.replace("\r\n", "\n");
+
+                    if (!actualOutput.equals(expectedOutput)) {
+                        submission.setStatus("WA");
+                        submissionRepository.save(submission);
+                        return;
+                    }
+                }
+
+                // If all passed
+                submission.setStatus("ACCEPTED");
+                submissionRepository.save(submission);
+                
+            } finally {
+                // Always stop and remove the container
+                killContainer(containerName);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
             submission.setStatus("INTERNAL_ERROR");
             submissionRepository.save(submission);
+            killContainer(containerName);
         } finally {
             cleanup(submissionDir);
+        }
+    }
+
+    private void killContainer(String containerName) {
+        try {
+            new ProcessBuilder("docker", "rm", "-f", containerName)
+                    .redirectErrorStream(true)
+                    .start()
+                    .waitFor(10, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            System.err.println("Failed to kill container: " + containerName);
         }
     }
 
