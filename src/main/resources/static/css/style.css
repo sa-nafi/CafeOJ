@@ -659,6 +659,46 @@ button[type="submit"]:hover {
     padding-top: 2rem;
 }
 
+.sample-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #555;
+}
+
+.copy-btn:hover {
+    background-color: #e0e0e0;
+    border-color: #ccc;
+}
+
+.copy-btn.copied {
+    background-color: #d4edda;
+    border-color: #28a745;
+    color: #28a745;
+}
+
+.copy-icon {
+    font-size: 0.9rem;
+}
+
+.copy-text {
+    font-weight: 500;
+}
+
 .sample-box {
     background-color: #f8f9fa;
     border: 1px solid #e9ecef;
@@ -672,7 +712,7 @@ button[type="submit"]:hover {
 .sample-label {
     font-weight: bold;
     color: var(--text-medium);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0;
     display: block;
 }
 

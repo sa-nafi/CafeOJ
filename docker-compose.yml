@@ -5,9 +5,9 @@ services:
     image: postgres:16-alpine
     container_name: cafeoj-postgres
     environment:
-      POSTGRES_DB: cafeoj
-      POSTGRES_USER: cafeoj_user
-      POSTGRES_PASSWORD: cafeoj_password
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres-data:/var/lib/postgresql/data
     ports:
@@ -15,7 +15,7 @@ services:
     networks:
       - cafeoj-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U cafeoj_user -d cafeoj"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -32,9 +32,10 @@ services:
         condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/cafeoj
-      SPRING_DATASOURCE_USERNAME: cafeoj_user
-      SPRING_DATASOURCE_PASSWORD: cafeoj_password
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
     ports:
       - "8080:8080"
     volumes:
@@ -59,4 +60,3 @@ volumes:
 networks:
   cafeoj-network:
     driver: bridge
-

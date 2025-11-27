@@ -40,11 +40,23 @@
             <div class="sample-section" th:if="${sampleCase != null}">
                 <h3>Sample Test Case</h3>
                 
-                <span class="sample-label">Input</span>
-                <div class="sample-box" th:text="${sampleCase.input}"></div>
+                <div class="sample-container">
+                    <span class="sample-label">Input</span>
+                    <button class="copy-btn" onclick="copyToClipboard('sample-input', this)" title="Copy to clipboard">
+                        <span class="copy-icon">📋</span>
+                        <span class="copy-text">Copy</span>
+                    </button>
+                </div>
+                <div class="sample-box" id="sample-input" th:text="${sampleCase.input}"></div>
                 
-                <span class="sample-label">Output</span>
-                <div class="sample-box" th:text="${sampleCase.expectedOutput}"></div>
+                <div class="sample-container">
+                    <span class="sample-label">Output</span>
+                    <button class="copy-btn" onclick="copyToClipboard('sample-output', this)" title="Copy to clipboard">
+                        <span class="copy-icon">📋</span>
+                        <span class="copy-text">Copy</span>
+                    </button>
+                </div>
+                <div class="sample-box" id="sample-output" th:text="${sampleCase.expectedOutput}"></div>
             </div>
         </div>
 
@@ -52,6 +64,7 @@
         <div class="submission-card">
             <h3>Submit Solution</h3>
             <form th:action="@{/problem/{id}/submit(id=${problem.id})}" method="post" enctype="multipart/form-data">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <label class="file-upload-label">Upload Java File (.java)</label>
                 <input type="file" name="solutionFile" accept=".java" required>
                 <button type="submit" class="btn-submit mt-1">Submit Code</button>
@@ -102,6 +115,32 @@
             const renderedContent = document.getElementById('rendered-content');
             renderedContent.innerHTML = marked.parse(rawMarkdown);
         });
+
+        // Copy to clipboard function
+        function copyToClipboard(elementId, button) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            
+            navigator.clipboard.writeText(text).then(function() {
+                // Show success feedback
+                const originalText = button.querySelector('.copy-text').textContent;
+                const originalIcon = button.querySelector('.copy-icon').textContent;
+                
+                button.querySelector('.copy-text').textContent = 'Copied!';
+                button.querySelector('.copy-icon').textContent = '✓';
+                button.classList.add('copied');
+                
+                // Reset after 2 seconds
+                setTimeout(function() {
+                    button.querySelector('.copy-text').textContent = originalText;
+                    button.querySelector('.copy-icon').textContent = originalIcon;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Failed to copy: ', err);
+                alert('Failed to copy to clipboard');
+            });
+        }
     </script>
 </body>
 </html>

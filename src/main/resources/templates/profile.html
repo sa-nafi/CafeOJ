@@ -11,7 +11,10 @@
       <a href="/" class="navbar-brand">⚡ CafeOJ</a>
       <div class="user-info">
         <span class="username" th:text="${user.username}">Username</span>
-        <a href="/logout" class="logout-btn">Logout</a>
+        <form th:action="@{/logout}" method="post" style="display: inline; margin: 0;">
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+          <button type="submit" class="logout-btn">Logout</button>
+        </form>
       </div>
     </nav>
 
