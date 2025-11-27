@@ -1,5 +1,3 @@
-# A + B Problem
-
 ## Description
 
 Given two integers A and B, output their sum.

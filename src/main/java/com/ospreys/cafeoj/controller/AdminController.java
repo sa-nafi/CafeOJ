@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import org.springframework.lang.NonNull;
 
 @Controller
 public class AdminController {
@@ -75,15 +76,15 @@ public class AdminController {
 
         return "redirect:/admin";
     }
-
     @PostMapping("/admin/problem/{id}/delete")
-    public String deleteProblem(@org.springframework.web.bind.annotation.PathVariable Long id) {
+    public String deleteProblem(@org.springframework.web.bind.annotation.PathVariable @NonNull Long id) {
+        problemRepository.deleteById(id);
         problemRepository.deleteById(id);
         return "redirect:/admin";
     }
 
     @GetMapping("/admin/problem/{id}/edit")
-    public String editProblemForm(@org.springframework.web.bind.annotation.PathVariable Long id, Model model) {
+    public String editProblemForm(@org.springframework.web.bind.annotation.PathVariable @NonNull Long id, Model model) {
         Problem problem = problemRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid problem Id:" + id));
         List<TestCase> testCases = testCaseRepository.findByProblemId(id);
         model.addAttribute("problem", problem);
@@ -93,7 +94,7 @@ public class AdminController {
 
     @PostMapping("/admin/problem/{id}/edit")
     public String updateProblem(
-            @org.springframework.web.bind.annotation.PathVariable Long id,
+            @org.springframework.web.bind.annotation.PathVariable @NonNull Long id,
             @RequestParam String title,
             @RequestParam(required = false) MultipartFile descriptionFile,
             @RequestParam Double timeLimit,

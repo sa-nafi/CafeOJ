@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 
@@ -21,9 +20,6 @@ import java.util.Map;
 public class AuthController {
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     private SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
 

@@ -80,7 +80,7 @@ public class ProblemController {
     }
 
     @GetMapping("/problem/{id}")
-    public String viewProblem(@PathVariable Long id, Model model, Principal principal) {
+    public String viewProblem(@PathVariable("id") long id, Model model, Principal principal) {
         Problem problem = problemRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid problem Id:" + id));
         List<TestCase> testCases = testCaseRepository.findByProblemId(id);
         
@@ -111,7 +111,7 @@ public class ProblemController {
     }
 
     @PostMapping("/problem/{id}/submit")
-    public String submitSolution(@PathVariable Long id, @RequestParam("solutionFile") MultipartFile solutionFile, Principal principal) throws IOException {
+    public String submitSolution(@PathVariable long id, @RequestParam("solutionFile") MultipartFile solutionFile, Principal principal) throws IOException {
         if (principal == null) {
             return "redirect:/login";
         }
