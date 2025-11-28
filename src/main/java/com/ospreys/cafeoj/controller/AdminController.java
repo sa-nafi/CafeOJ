@@ -116,9 +116,14 @@ public class AdminController {
 
         problemRepository.save(problem);
 
-        // Delete selected test cases
+        // Delete selected test cases (only if they belong to this problem)
         if (deleteTestCaseIds != null && !deleteTestCaseIds.isEmpty()) {
-            testCaseRepository.deleteAllById(deleteTestCaseIds);
+            List<TestCase> casesToDelete = testCaseRepository.findAllById(deleteTestCaseIds);
+            for (TestCase tc : casesToDelete) {
+                if (tc.getProblem().getId().equals(id)) {
+                    testCaseRepository.delete(tc);
+                }
+            }
         }
 
         // Add new test cases

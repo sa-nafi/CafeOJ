@@ -43,8 +43,15 @@ public class JudgeService {
             String code = submission.getCode();
             // Remove package declaration
             code = code.replaceAll("package\\s+.*;", "");
-            // Rename public class to Solution
-            code = code.replaceAll("public\\s+class\\s+\\w+", "public class Solution");
+            
+            // Validate that the code contains a class named Solution
+            // We check for the class declaration pattern (handles both "public class Solution" and "class Solution")
+            if (!code.matches("(?s).*\\bclass\\s+Solution\\b.*")) {
+                submission.setStatus("COMPILE_ERROR");
+                submissionRepository.save(submission);
+                cleanup(submissionDir);
+                return;
+            }
             
             Files.write(submissionDir.resolve("Solution.java"), code.getBytes(StandardCharsets.UTF_8));
 
@@ -115,15 +122,15 @@ public class JudgeService {
                     TestCase testCase = testCases.get(i);
 
                     // Write input file
-                    Files.write(submissionDir.resolve("input.txt"), testCase.getInput().getBytes(StandardCharsets.UTF_8));
+                    Files.write(submissionDir.resolve("input.in"), testCase.getInput().getBytes(StandardCharsets.UTF_8));
 
                     // Execute test in the running container
                     ProcessBuilder execPb = new ProcessBuilder(
                             "docker", "exec", containerName,
-                            "sh", "-c", "java Solution < input.txt"
+                            "sh", "-c", "java Solution < input.in"
                     );
                     
-                    File outputFile = submissionDir.resolve("output.txt").toFile();
+                    File outputFile = submissionDir.resolve("output.out").toFile();
                     execPb.redirectOutput(outputFile);
                     execPb.redirectErrorStream(true);
 

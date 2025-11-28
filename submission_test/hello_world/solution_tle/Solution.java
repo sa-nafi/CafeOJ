@@ -1,4 +1,4 @@
-public class TLE {
+public class Solution {
     public static void main(String[] args) {
         while (true) {
             
