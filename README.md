@@ -1,6 +1,6 @@
 # CafeOJ - Online Judge Platform
 
-A Spring Boot-based online judge platform for competitive programming.
+A Spring Boot-based online judge platform for problem solving.
 
 ## 🚀 Quick Start with Docker
 
