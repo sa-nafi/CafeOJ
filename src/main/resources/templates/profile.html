@@ -1,49 +1,49 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <th:block th:insert="~{fragments/head :: common}" />
     <title>Profile - CafeOJ</title>
-    <link rel="stylesheet" href="/css/style.css" />
-  </head>
-  <body>
-    <nav class="navbar">
-      <a href="/" class="navbar-brand">⚡ CafeOJ</a>
-      <div class="user-info">
-        <span class="username" th:text="${user.username}">Username</span>
-        <form th:action="@{/logout}" method="post" style="display: inline; margin: 0;">
-          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-          <button type="submit" class="logout-btn">Logout</button>
-        </form>
-      </div>
-    </nav>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors duration-200">
+    <nav th:replace="~{fragments/navbar :: profile}" />
 
-    <div class="dashboard-container">
-      <div class="profile-card">
-        <div class="profile-header">
-          <h2>Profile Dashboard</h2>
+    <!-- Main Content -->
+    <div class="max-w-2xl mx-auto px-4 py-8">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
+            <!-- Profile Header -->
+            <div class="bg-gradient-to-r from-primary to-primary-dark px-6 py-4">
+                <h2 class="text-2xl font-bold text-white">Profile Dashboard</h2>
+            </div>
+
+            <div class="p-6">
+                <!-- User Details -->
+                <div class="grid grid-cols-2 gap-4 mb-8">
+                    <div>
+                        <span class="text-sm text-gray-500 dark:text-gray-400">Name</span>
+                        <p class="text-lg font-medium text-gray-800 dark:text-white" th:text="${user.name}">User Name</p>
+                    </div>
+                    <div>
+                        <span class="text-sm text-gray-500 dark:text-gray-400">Email</span>
+                        <p class="text-lg font-medium text-gray-800 dark:text-white" th:text="${user.email}">user@example.com</p>
+                    </div>
+                </div>
+
+                <!-- Statistics -->
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Statistics</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-green-50 dark:bg-green-900/20 rounded-xl p-6 text-center">
+                        <span class="block text-4xl font-bold text-green-600 dark:text-green-400" th:text="${problemsSolved}">0</span>
+                        <span class="text-sm text-green-700 dark:text-green-300">Problems Solved</span>
+                    </div>
+                    <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 text-center">
+                        <span class="block text-4xl font-bold text-blue-600 dark:text-blue-400" th:text="${totalProblems}">0</span>
+                        <span class="text-sm text-blue-700 dark:text-blue-300">Total Problems</span>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <div class="user-details">
-          <div class="detail-label">Name:</div>
-          <div th:text="${user.name}">User Name</div>
-
-          <div class="detail-label">Email:</div>
-          <div th:text="${user.email}">user@example.com</div>
-        </div>
-
-        <h3>Statistics</h3>
-        <div class="stats-grid">
-          <div class="stat-item">
-            <span class="stat-value" th:text="${problemsSolved}">0</span>
-            <span class="stat-label">Problems Solved</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value" th:text="${totalProblems}">0</span>
-            <span class="stat-label">Total Problems</span>
-          </div>
-        </div>
-      </div>
     </div>
-  </body>
+
+    <th:block th:replace="~{fragments/darkmode :: darkModeScript}" />
+</body>
 </html>

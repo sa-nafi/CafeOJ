@@ -103,11 +103,44 @@ public class ProblemController {
             }
         }
 
+        // Check if there's any pending submission to enable polling
+        boolean hasPendingSubmission = submissionHistory.stream()
+                .anyMatch(s -> "PENDING".equals(s.getStatus()));
+
         model.addAttribute("problem", problem);
         model.addAttribute("sampleCase", sampleCase);
         model.addAttribute("lastSubmission", lastSubmission);
         model.addAttribute("submissionHistory", submissionHistory);
+        model.addAttribute("hasPendingSubmission", hasPendingSubmission);
         return "problem-detail";
+    }
+
+    @GetMapping("/problem/{id}/submission-panel")
+    public String getSubmissionPanel(@PathVariable("id") long id, Model model, Principal principal) {
+        Problem problem = problemRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid problem Id:" + id));
+        
+        List<Submission> submissionHistory = new ArrayList<>();
+        Submission lastSubmission = null;
+
+        if (principal != null) {
+            User user = userService.findByUsername(principal.getName()).orElse(null);
+            if (user != null) {
+                submissionHistory = submissionRepository.findByUserIdAndProblemIdOrderBySubmissionDateDesc(user.getId(), id);
+                if (!submissionHistory.isEmpty()) {
+                    lastSubmission = submissionHistory.get(0);
+                }
+            }
+        }
+
+        // Check if there's any pending submission to continue polling
+        boolean hasPendingSubmission = submissionHistory.stream()
+                .anyMatch(s -> "PENDING".equals(s.getStatus()));
+
+        model.addAttribute("problem", problem);
+        model.addAttribute("lastSubmission", lastSubmission);
+        model.addAttribute("submissionHistory", submissionHistory);
+        model.addAttribute("hasPendingSubmission", hasPendingSubmission);
+        return "fragments/submission-panel :: submissionPanel";
     }
 
     @PostMapping("/problem/{id}/submit")

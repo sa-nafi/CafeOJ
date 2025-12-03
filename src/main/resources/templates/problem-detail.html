@@ -1,120 +1,82 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <th:block th:insert="~{fragments/head :: common}" />
     <title th:text="${problem.title} + ' - CafeOJ'">Problem Detail</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <!-- KaTeX for math rendering -->
+    <!-- Additional dependencies for this page -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
-    <!-- Marked.js for Markdown rendering -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!-- DOMPurify for XSS protection -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+    <!-- htmx for live updates -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <style>
+        .markdown-body { line-height: 1.7; }
+        .markdown-body h1, .markdown-body h2, .markdown-body h3 { margin-top: 1.5rem; margin-bottom: 0.75rem; font-weight: 600; }
+        .markdown-body p { margin-bottom: 1rem; }
+        .markdown-body ul, .markdown-body ol { margin-bottom: 1rem; padding-left: 1.5rem; }
+        .markdown-body li { margin-bottom: 0.25rem; }
+        .markdown-body pre { background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin-bottom: 1rem; }
+        .markdown-body code { font-family: ui-monospace, monospace; font-size: 0.9em; }
+        .markdown-body :not(pre) > code { background: #e2e8f0; padding: 0.125rem 0.375rem; border-radius: 0.25rem; }
+        .dark .markdown-body :not(pre) > code { background: #374151; color: #e5e7eb; }
+    </style>
 </head>
-<body>
-    <nav class="navbar">
-        <a href="/" class="navbar-brand">⚡ CafeOJ</a>
-        <div class="user-info">
-            <div th:if="${#authentication.name != 'anonymousUser'}">
-                <a href="/profile" class="nav-link" th:text="${#authentication.name}">Username</a>
-            </div>
-            <div th:unless="${#authentication.name != 'anonymousUser'}">
-                <a href="/login" class="nav-link">Login</a>
-            </div>
-        </div>
-    </nav>
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors duration-200">
+    <nav th:replace="~{fragments/navbar :: default}" />
 
-    <div class="main-container">
+    <!-- Main Content - Two Column Layout -->
+    <div class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Left Column: Problem Content -->
-        <div class="problem-content">
-            <h1 class="problem-title" th:text="${problem.title}">Problem Title</h1>
-            <div class="problem-meta">
-                Time Limit: <span th:text="${problem.timeLimit}">1.0</span>s &nbsp;|&nbsp;
-                Memory Limit: <span th:text="${problem.memoryLimit}">256</span>MB
+        <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-md p-8">
+            <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-2" th:text="${problem.title}">Problem Title</h1>
+            <div class="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                Time Limit: <span class="font-medium" th:text="${problem.timeLimit}">1.0</span>s &nbsp;|&nbsp;
+                Memory Limit: <span class="font-medium" th:text="${problem.memoryLimit}">256</span>MB
             </div>
             
             <!-- Hidden div to store raw markdown -->
             <div id="raw-markdown" class="hidden" th:text="${problem.description}"></div>
             
             <!-- Div where markdown will be rendered -->
-            <div id="rendered-content" class="markdown-body"></div>
+            <div id="rendered-content" class="markdown-body text-gray-700 dark:text-gray-300"></div>
 
             <!-- Sample Test Cases -->
-            <div class="sample-section" th:if="${sampleCase != null}">
-                <h3>Sample Test Case</h3>
+            <div th:if="${sampleCase != null}" class="mt-8">
+                <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Sample Test Case</h3>
                 
-                <div class="sample-container">
-                    <span class="sample-label">Input</span>
-                    <button class="copy-btn" onclick="copyToClipboard('sample-input', this)" title="Copy to clipboard">
-                        <span class="copy-icon">📋</span>
-                        <span class="copy-text">Copy</span>
-                    </button>
+                <div class="mb-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Input</span>
+                        <button class="inline-flex items-center gap-1 text-sm text-primary hover:text-primary-dark transition-colors" onclick="copyToClipboard('sample-input', this)" title="Copy to clipboard">
+                            <span class="copy-icon">📋</span>
+                            <span class="copy-text">Copy</span>
+                        </button>
+                    </div>
+                    <pre id="sample-input" class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto border border-gray-200 dark:border-gray-700" th:text="${sampleCase.input}"></pre>
                 </div>
-                <div class="sample-box" id="sample-input" th:text="${sampleCase.input}"></div>
                 
-                <div class="sample-container">
-                    <span class="sample-label">Output</span>
-                    <button class="copy-btn" onclick="copyToClipboard('sample-output', this)" title="Copy to clipboard">
-                        <span class="copy-icon">📋</span>
-                        <span class="copy-text">Copy</span>
-                    </button>
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Output</span>
+                        <button class="inline-flex items-center gap-1 text-sm text-primary hover:text-primary-dark transition-colors" onclick="copyToClipboard('sample-output', this)" title="Copy to clipboard">
+                            <span class="copy-icon">📋</span>
+                            <span class="copy-text">Copy</span>
+                        </button>
+                    </div>
+                    <pre id="sample-output" class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto border border-gray-200 dark:border-gray-700" th:text="${sampleCase.expectedOutput}"></pre>
                 </div>
-                <div class="sample-box" id="sample-output" th:text="${sampleCase.expectedOutput}"></div>
             </div>
         </div>
 
         <!-- Right Column: Submission -->
-        <div class="submission-card">
-            <h3>Submit Solution</h3>
-            <form th:action="@{/problem/{id}/submit(id=${problem.id})}" method="post" enctype="multipart/form-data">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                <label class="file-upload-label">Upload Java File (.java)</label>
-                <p class="submission-note">Your class must be named <code>Solution</code></p>
-                <input type="file" name="solutionFile" accept=".java" required>
-                <button type="submit" class="btn-submit mt-1">Submit Code</button>
-            </form>
-
-            <!-- Verdict Display (If user has a recent submission) -->
-            <div th:if="${lastSubmission != null}" class="verdict-badge"
-                 th:classappend="${
-                    lastSubmission.status == 'ACCEPTED' ? 'verdict-ac' :
-                    lastSubmission.status == 'PENDING' ? 'verdict-pending' :
-                    lastSubmission.status == 'TLE' ? 'verdict-tle' :
-                    lastSubmission.status == 'RTE' ? 'verdict-rte' :
-                    lastSubmission.status == 'COMPILE_ERROR' ? 'verdict-ce' : 'verdict-wa'
-                 }"
-                 th:text="${lastSubmission.status}">
-                STATUS
-            </div>
-
-            <!-- Submission History -->
-            <div th:if="${!submissionHistory.isEmpty()}" class="submission-history">
-                <h4>History</h4>
-                <div class="submission-history-list">
-                    <table class="submission-history-table">
-                        <tr th:each="sub : ${submissionHistory}">
-                            <td>
-                                <span class="submission-date" th:text="${#temporals.format(sub.submissionDate, 'MMM dd HH:mm')}">Date</span>
-                                <span th:text="${sub.status}" 
-                                      th:style="${'font-weight: bold; color: ' + 
-                                        (sub.status == 'ACCEPTED' ? '#2e7d32' : 
-                                         sub.status == 'PENDING' ? '#555' : 
-                                         sub.status == 'TLE' ? '#e65100' : 
-                                         sub.status == 'RTE' ? '#7b1fa2' : 
-                                         sub.status == 'COMPILE_ERROR' ? '#455a64' : '#c62828')}">
-                                    STATUS
-                                </span>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 h-fit sticky top-8">
+            <th:block th:replace="~{fragments/submission-panel :: submissionPanel}" />
         </div>
     </div>
 
+    <th:block th:replace="~{fragments/darkmode :: darkModeScript}" />
     <script>
         // Render Markdown with XSS protection and KaTeX math
         document.addEventListener('DOMContentLoaded', function() {
@@ -138,19 +100,15 @@
             const text = element.textContent;
             
             navigator.clipboard.writeText(text).then(function() {
-                // Show success feedback
                 const originalText = button.querySelector('.copy-text').textContent;
                 const originalIcon = button.querySelector('.copy-icon').textContent;
                 
                 button.querySelector('.copy-text').textContent = 'Copied!';
                 button.querySelector('.copy-icon').textContent = '✓';
-                button.classList.add('copied');
                 
-                // Reset after 2 seconds
                 setTimeout(function() {
                     button.querySelector('.copy-text').textContent = originalText;
                     button.querySelector('.copy-icon').textContent = originalIcon;
-                    button.classList.remove('copied');
                 }, 2000);
             }).catch(function(err) {
                 console.error('Failed to copy: ', err);

@@ -1,50 +1,51 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <th:block th:insert="~{fragments/head :: common}" />
     <title>Problem Set - CafeOJ</title>
-    <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
-    <nav class="navbar">
-        <a href="/" class="navbar-brand">⚡ CafeOJ</a>
-        <div class="user-info">
-            <div th:if="${#authentication.name != 'anonymousUser'}">
-                <a href="/profile" class="nav-link" th:text="${#authentication.name}">Username</a>
-            </div>
-            <div th:unless="${#authentication.name != 'anonymousUser'}">
-                <a href="/login" class="nav-link">Login</a>
-            </div>
-        </div>
-    </nav>
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors duration-200">
+    <nav th:replace="~{fragments/navbar :: default}" />
 
-    <div class="container">
-        <h1 class="page-title">Problem Set</h1>
+    <!-- Main Content -->
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-6">Problem Set</h1>
         
-        <table class="problem-table">
-            <thead>
-                <tr>
-                    <th class="status-col">Status</th>
-                    <th>Title</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="dto : ${problems}">
-                    <td class="status-col">
-                        <!-- Solved -->
-                        <span th:if="${dto.status == 'SOLVED'}" class="status-badge status-solved" title="Solved">✓</span>
-                        <!-- Tried -->
-                        <span th:if="${dto.status == 'TRIED'}" class="status-badge status-tried" title="Tried">✗</span>
-                        <!-- Not Tried -->
-                        <span th:if="${dto.status == 'NOT_TRIED'}" class="status-badge status-none" title="Not Tried">-</span>
-                    </td>
-                    <td>
-                        <a th:href="@{/problem/{id}(id=${dto.problem.id})}" class="problem-link" th:text="${dto.problem.title}">Problem Title</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
+            <table class="w-full">
+                <thead class="bg-gray-50 dark:bg-gray-700">
+                    <tr>
+                        <th class="w-20 px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Title</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                    <tr th:each="dto : ${problems}" class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                        <td class="px-4 py-4 text-center">
+                            <!-- Solved -->
+                            <span th:if="${dto.status == 'SOLVED'}" 
+                                  class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 font-bold" 
+                                  title="Solved">✓</span>
+                            <!-- Tried -->
+                            <span th:if="${dto.status == 'TRIED'}" 
+                                  class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 font-bold" 
+                                  title="Tried">✗</span>
+                            <!-- Not Tried -->
+                            <span th:if="${dto.status == 'NOT_TRIED'}" 
+                                  class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-600 text-gray-400 dark:text-gray-400" 
+                                  title="Not Tried">-</span>
+                        </td>
+                        <td class="px-4 py-4">
+                            <a th:href="@{/problem/{id}(id=${dto.problem.id})}" 
+                               class="text-primary hover:text-primary-dark dark:text-primary-light font-medium hover:underline"
+                               th:text="${dto.problem.title}">Problem Title</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
+
+    <th:block th:replace="~{fragments/darkmode :: darkModeScript}" />
 </body>
 </html>
