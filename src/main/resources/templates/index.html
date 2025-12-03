@@ -4,18 +4,23 @@
     <th:block th:insert="~{fragments/head :: common}" />
     <title>CafeOJ - Online Judge</title>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors duration-200">
+<body class="mesh-bg min-h-screen transition-colors duration-200">
     <nav th:replace="~{fragments/navbar :: default}" />
+    <div class="h-16"></div>
 
     <!-- Hero Section -->
     <div class="flex flex-col items-center justify-center text-center py-24 px-4">
-        <h2 class="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-6">The place for problem solving</h2>
-        <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mb-8">
-            CafeOJ is where programmers solve algorithm and data structure challenges and become a part of an awesome community.
-        </p>
-        <a href="/problems" class="bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-8 rounded-lg shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5">
-            View Problem Set
-        </a>
+        <div class="glass-card rounded-3xl p-12 max-w-4xl glow">
+            <h2 class="text-3xl md:text-5xl font-bold text-gray-800 dark:text-white mb-6">
+                The place for <span class="gradient-text">problem solving</span>
+            </h2>
+            <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mb-8">
+                CafeOJ is where programmers solve algorithm and data structure challenges and become a part of an awesome community.
+            </p>
+            <a href="/problems" class="inline-block glass-btn text-white font-semibold py-3 px-8 rounded-xl">
+                View Problem Set
+            </a>
+        </div>
     </div>
 
     <th:block th:replace="~{fragments/darkmode :: darkModeScript}" />
