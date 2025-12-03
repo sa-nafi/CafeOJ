@@ -79,7 +79,6 @@ public class AdminController {
     @PostMapping("/admin/problem/{id}/delete")
     public String deleteProblem(@org.springframework.web.bind.annotation.PathVariable @NonNull Long id) {
         problemRepository.deleteById(id);
-        problemRepository.deleteById(id);
         return "redirect:/admin";
     }
 
