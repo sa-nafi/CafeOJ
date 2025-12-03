@@ -9,24 +9,24 @@
     <form th:action="@{/problem/{id}/submit(id=${problem.id})}" method="post" enctype="multipart/form-data">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Upload Java File (.java)</label>
-        <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Your class must be named <code class="bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded">Solution</code></p>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Your class must be named <code class="glass-subtle px-1.5 py-0.5 rounded">Solution</code></p>
         <input type="file" name="solutionFile" accept=".java" required
-               class="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary-dark file:cursor-pointer file:transition-colors mb-4">
-        <button type="submit" class="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-2.5 rounded-lg transition-colors duration-200">
+               class="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-primary/90 file:text-white hover:file:bg-primary-dark file:cursor-pointer file:transition-colors file:backdrop-blur-sm mb-4">
+        <button type="submit" class="w-full glass-btn text-white font-semibold py-2.5 rounded-xl">
             Submit Code
         </button>
     </form>
 
     <!-- Verdict Display -->
     <div th:if="${lastSubmission != null}" class="mt-4">
-        <div class="px-4 py-2 rounded-lg text-center font-bold"
+        <div class="px-4 py-2 rounded-xl text-center font-bold glass-badge"
              th:classappend="${
-                lastSubmission.status == 'ACCEPTED' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' :
-                lastSubmission.status == 'PENDING' ? 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 animate-pulse' :
-                lastSubmission.status == 'TLE' ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400' :
-                lastSubmission.status == 'RTE' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400' :
-                lastSubmission.status == 'COMPILE_ERROR' ? 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300' : 
-                'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+                lastSubmission.status == 'ACCEPTED' ? 'bg-green-100/80 dark:bg-green-900/40 text-green-700 dark:text-green-400' :
+                lastSubmission.status == 'PENDING' ? 'bg-gray-100/80 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 animate-pulse' :
+                lastSubmission.status == 'TLE' ? 'bg-orange-100/80 dark:bg-orange-900/40 text-orange-700 dark:text-orange-400' :
+                lastSubmission.status == 'RTE' ? 'bg-purple-100/80 dark:bg-purple-900/40 text-purple-700 dark:text-purple-400' :
+                lastSubmission.status == 'COMPILE_ERROR' ? 'bg-gray-200/80 dark:bg-gray-600/50 text-gray-700 dark:text-gray-300' : 
+                'bg-red-100/80 dark:bg-red-900/40 text-red-700 dark:text-red-400'
              }"
              th:text="${lastSubmission.status == 'PENDING' ? 'Judging...' : lastSubmission.status}">
             STATUS
@@ -37,7 +37,7 @@
     <div th:if="${!submissionHistory.isEmpty()}" class="mt-6">
         <h4 class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-3">History</h4>
         <div class="space-y-2 max-h-48 overflow-y-auto">
-            <div th:each="sub : ${submissionHistory}" class="flex justify-between items-center text-sm py-2 border-b border-gray-100 dark:border-gray-700 last:border-0">
+            <div th:each="sub : ${submissionHistory}" class="flex justify-between items-center text-sm py-2 border-b border-gray-100/50 dark:border-gray-700/50 last:border-0">
                 <span class="text-gray-500 dark:text-gray-400" th:text="${#temporals.format(sub.submissionDate, 'MMM dd HH:mm')}">Date</span>
                 <span class="font-semibold"
                       th:classappend="${

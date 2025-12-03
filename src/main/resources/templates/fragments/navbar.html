@@ -2,34 +2,36 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <!-- Default navbar for public pages (shows login/profile link based on auth state) -->
-<nav th:fragment="default" class="bg-primary dark:bg-gray-800 text-white px-8 py-4 flex justify-between items-center shadow-md">
+<nav th:fragment="default" class="fixed top-0 left-0 right-0 z-50 glass-nav text-white px-8 py-4 flex justify-between items-center">
     <div class="flex items-center gap-6">
-        <a href="/" class="text-2xl font-bold hover:opacity-90 transition-opacity">⚡ CafeOJ</a>
-        <a href="/problems" class="font-semibold hover:underline">Problems</a>
+        <a href="/" class="text-2xl font-bold hover:opacity-90 transition-opacity drop-shadow-sm">⚡ CafeOJ</a>
+        <a href="/problems" class="font-medium hover:text-white/80 transition-colors">Problems</a>
     </div>
     <div class="flex items-center gap-4">
         <th:block th:replace="~{fragments/darkmode :: darkModeToggle}" />
         <div th:if="${#authentication.name != 'anonymousUser'}">
-            <a href="/profile" class="font-semibold hover:underline" th:text="${#authentication.name}">Username</a>
+            <a href="/profile" class="font-medium hover:text-white/80 transition-colors" th:text="${#authentication.name}">Username</a>
         </div>
         <div th:unless="${#authentication.name != 'anonymousUser'}">
-            <a href="/login" class="font-semibold hover:underline">Login</a>
+            <a href="/login" class="bg-white/15 hover:bg-white/25 backdrop-blur-sm px-4 py-1.5 rounded-lg font-medium transition-all duration-200 border border-white/20">Login</a>
         </div>
     </div>
 </nav>
+<!-- Spacer to prevent content from hiding behind fixed navbar -->
+<div th:fragment="navbar-spacer" class="h-16"></div>
 
 <!-- Profile navbar (shows username + logout button) -->
-<nav th:fragment="profile" class="bg-primary dark:bg-gray-800 text-white px-8 py-4 flex justify-between items-center shadow-md">
+<nav th:fragment="profile" class="fixed top-0 left-0 right-0 z-50 glass-nav text-white px-8 py-4 flex justify-between items-center">
     <div class="flex items-center gap-6">
-        <a href="/" class="text-2xl font-bold hover:opacity-90 transition-opacity">⚡ CafeOJ</a>
-        <a href="/problems" class="font-semibold hover:underline">Problems</a>
+        <a href="/" class="text-2xl font-bold hover:opacity-90 transition-opacity drop-shadow-sm">⚡ CafeOJ</a>
+        <a href="/problems" class="font-medium hover:text-white/80 transition-colors">Problems</a>
     </div>
     <div class="flex items-center gap-4">
         <th:block th:replace="~{fragments/darkmode :: darkModeToggle}" />
         <span class="font-bold" th:text="${user.username}">Username</span>
         <form th:action="@{/logout}" method="post" class="inline">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-            <button type="submit" class="bg-primary-dark hover:bg-blue-800 text-white text-sm px-4 py-1.5 rounded transition-colors">
+            <button type="submit" class="bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white text-sm px-4 py-1.5 rounded-lg transition-all duration-200 border border-white/20">
                 Logout
             </button>
         </form>
@@ -37,14 +39,14 @@
 </nav>
 
 <!-- Admin navbar (shows admin branding + profile link) -->
-<nav th:fragment="admin" class="bg-primary dark:bg-gray-800 text-white px-8 py-4 flex justify-between items-center shadow-md">
+<nav th:fragment="admin" class="fixed top-0 left-0 right-0 z-50 glass-nav text-white px-8 py-4 flex justify-between items-center">
     <div class="flex items-center gap-6">
-        <a href="/" class="text-2xl font-bold hover:opacity-90 transition-opacity">⚡ CafeOJ Admin</a>
-        <a href="/problems" class="font-semibold hover:underline">Problems</a>
+        <a href="/" class="text-2xl font-bold hover:opacity-90 transition-opacity drop-shadow-sm">⚡ CafeOJ Admin</a>
+        <a href="/problems" class="font-medium hover:text-white/80 transition-colors">Problems</a>
     </div>
     <div class="flex items-center gap-4">
         <th:block th:replace="~{fragments/darkmode :: darkModeToggle}" />
-        <a href="/profile" class="font-semibold hover:underline" th:text="${#authentication.name}">Admin</a>
+        <a href="/profile" class="font-medium hover:text-white/80 transition-colors" th:text="${#authentication.name}">Admin</a>
     </div>
 </nav>
 

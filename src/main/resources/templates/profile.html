@@ -4,25 +4,26 @@
     <th:block th:insert="~{fragments/head :: common}" />
     <title>Profile - CafeOJ</title>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors duration-200">
+<body class="mesh-bg min-h-screen transition-colors duration-200">
     <nav th:replace="~{fragments/navbar :: profile}" />
+    <div class="h-16"></div>
 
     <!-- Main Content -->
     <div class="max-w-2xl mx-auto px-4 py-8">
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
+        <div class="glass-card rounded-2xl overflow-hidden">
             <!-- Profile Header -->
-            <div class="bg-gradient-to-r from-primary to-primary-dark px-6 py-4">
+            <div class="gradient-bg px-6 py-5">
                 <h2 class="text-2xl font-bold text-white">Profile Dashboard</h2>
             </div>
 
             <div class="p-6">
                 <!-- User Details -->
                 <div class="grid grid-cols-2 gap-4 mb-8">
-                    <div>
+                    <div class="glass-subtle rounded-xl p-4">
                         <span class="text-sm text-gray-500 dark:text-gray-400">Name</span>
                         <p class="text-lg font-medium text-gray-800 dark:text-white" th:text="${user.name}">User Name</p>
                     </div>
-                    <div>
+                    <div class="glass-subtle rounded-xl p-4">
                         <span class="text-sm text-gray-500 dark:text-gray-400">Email</span>
                         <p class="text-lg font-medium text-gray-800 dark:text-white" th:text="${user.email}">user@example.com</p>
                     </div>
@@ -31,11 +32,11 @@
                 <!-- Statistics -->
                 <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Statistics</h3>
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-green-50 dark:bg-green-900/20 rounded-xl p-6 text-center">
+                    <div class="glass-subtle rounded-xl p-6 text-center bg-green-50/50 dark:bg-green-900/20">
                         <span class="block text-4xl font-bold text-green-600 dark:text-green-400" th:text="${problemsSolved}">0</span>
                         <span class="text-sm text-green-700 dark:text-green-300">Problems Solved</span>
                     </div>
-                    <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 text-center">
+                    <div class="glass-subtle rounded-xl p-6 text-center bg-blue-50/50 dark:bg-blue-900/20">
                         <span class="block text-4xl font-bold text-blue-600 dark:text-blue-400" th:text="${totalProblems}">0</span>
                         <span class="text-sm text-blue-700 dark:text-blue-300">Total Problems</span>
                     </div>

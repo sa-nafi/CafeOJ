@@ -23,13 +23,14 @@
         .dark .markdown-body :not(pre) > code { background: #374151; color: #e5e7eb; }
     </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors duration-200">
+<body class="mesh-bg min-h-screen transition-colors duration-200">
     <nav th:replace="~{fragments/navbar :: default}" />
+    <div class="h-16"></div>
 
     <!-- Main Content - Two Column Layout -->
     <div class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Left Column: Problem Content -->
-        <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-md p-8">
+        <div class="lg:col-span-2 glass-card rounded-2xl p-8">
             <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-2" th:text="${problem.title}">Problem Title</h1>
             <div class="text-sm text-gray-500 dark:text-gray-400 mb-6">
                 Time Limit: <span class="font-medium" th:text="${problem.timeLimit}">1.0</span>s &nbsp;|&nbsp;
@@ -54,7 +55,7 @@
                             <span class="copy-text">Copy</span>
                         </button>
                     </div>
-                    <pre id="sample-input" class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto border border-gray-200 dark:border-gray-700" th:text="${sampleCase.input}"></pre>
+                    <pre id="sample-input" class="glass-subtle text-gray-800 dark:text-gray-100 p-4 rounded-xl font-mono text-sm overflow-x-auto" th:text="${sampleCase.input}"></pre>
                 </div>
                 
                 <div>
@@ -65,13 +66,13 @@
                             <span class="copy-text">Copy</span>
                         </button>
                     </div>
-                    <pre id="sample-output" class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto border border-gray-200 dark:border-gray-700" th:text="${sampleCase.expectedOutput}"></pre>
+                    <pre id="sample-output" class="glass-subtle text-gray-800 dark:text-gray-100 p-4 rounded-xl font-mono text-sm overflow-x-auto" th:text="${sampleCase.expectedOutput}"></pre>
                 </div>
             </div>
         </div>
 
         <!-- Right Column: Submission -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 h-fit sticky top-8">
+        <div class="glass-card rounded-2xl p-6 h-fit sticky top-24">
             <th:block th:replace="~{fragments/submission-panel :: submissionPanel}" />
         </div>
     </div>
