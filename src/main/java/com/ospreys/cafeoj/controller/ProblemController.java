@@ -22,9 +22,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 @Controller
 public class ProblemController {
@@ -49,29 +49,28 @@ public class ProblemController {
         List<Problem> allProblems = problemRepository.findAll();
         List<ProblemStatusDTO> problemList = new ArrayList<>();
 
-        Map<Long, String> problemStatusMap = new HashMap<>();
+        // Use optimized queries that only fetch problem IDs instead of full Submission entities
+        Set<Long> solvedIds = Collections.emptySet();
+        Set<Long> attemptedIds = Collections.emptySet();
 
         if (principal != null) {
             String username = principal.getName();
             User user = userService.findByUsername(username).orElse(null);
             if (user != null) {
-                List<Submission> userSubmissions = submissionRepository.findByUserId(user.getId());
-                for (Submission s : userSubmissions) {
-                    Long pid = s.getProblem().getId();
-                    String currentStatus = problemStatusMap.getOrDefault(pid, "NOT_TRIED");
-                    
-                    if ("ACCEPTED".equals(s.getStatus())) {
-                        problemStatusMap.put(pid, "SOLVED");
-                    } else if (!"SOLVED".equals(currentStatus)) {
-                        // If not already solved, mark as TRIED (unless it was already tried, doesn't matter)
-                        problemStatusMap.put(pid, "TRIED");
-                    }
-                }
+                solvedIds = submissionRepository.findSolvedProblemIdsByUserId(user.getId());
+                attemptedIds = submissionRepository.findAttemptedProblemIdsByUserId(user.getId());
             }
         }
 
         for (Problem p : allProblems) {
-            String status = problemStatusMap.getOrDefault(p.getId(), "NOT_TRIED");
+            String status;
+            if (solvedIds.contains(p.getId())) {
+                status = "SOLVED";
+            } else if (attemptedIds.contains(p.getId())) {
+                status = "TRIED";
+            } else {
+                status = "NOT_TRIED";
+            }
             problemList.add(new ProblemStatusDTO(p, status));
         }
 
