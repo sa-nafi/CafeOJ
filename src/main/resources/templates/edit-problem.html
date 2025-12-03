@@ -1,94 +1,118 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <th:block th:insert="~{fragments/head :: common}" />
     <title>Edit Problem - CafeOJ</title>
-    <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
-    <nav class="navbar">
-        <a href="/" class="navbar-brand">⚡ CafeOJ</a>
-        <div class="user-info">
-            <a href="/profile" class="nav-link" th:text="${#authentication.name}">Admin</a>
-        </div>
-    </nav>
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors duration-200">
+    <nav th:replace="~{fragments/navbar :: admin}" />
 
-    <div class="container-narrow">
-        <h1 class="page-title">Edit Problem</h1>
+    <!-- Main Content -->
+    <div class="max-w-3xl mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-6">Edit Problem</h1>
         
-        <form th:action="@{/admin/problem/{id}/edit(id=${problem.id})}" method="post" enctype="multipart/form-data">
+        <form th:action="@{/admin/problem/{id}/edit(id=${problem.id})}" method="post" enctype="multipart/form-data"
+              class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 space-y-6">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-            <div class="form-section">
-                <label for="title">Problem Title</label>
-                <input type="text" id="title" name="title" th:value="${problem.title}" required>
+            
+            <div>
+                <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Problem Title</label>
+                <input type="text" id="title" name="title" th:value="${problem.title}" required
+                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors">
             </div>
 
-            <div class="form-section">
-                <label for="descriptionFile">Problem Statement (.md file)</label>
-                <input type="file" id="descriptionFile" name="descriptionFile" accept=".md">
-                <div class="hint">Upload a new file only if you want to replace the existing description.</div>
+            <div>
+                <label for="descriptionFile" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Problem Statement (.md file)</label>
+                <input type="file" id="descriptionFile" name="descriptionFile" accept=".md"
+                       class="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary-dark file:cursor-pointer file:transition-colors">
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Upload a new file only if you want to replace the existing description.</p>
             </div>
 
-            <div class="file-row">
-                <div class="form-section">
-                    <label for="timeLimit">Time Limit (seconds)</label>
-                    <input type="text" id="timeLimit" name="timeLimit" th:value="${problem.timeLimit}" required>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="timeLimit" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Time Limit (seconds)</label>
+                    <input type="text" id="timeLimit" name="timeLimit" th:value="${problem.timeLimit}" required
+                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors">
                 </div>
-                <div class="form-section">
-                    <label for="memoryLimit">Memory Limit (MB)</label>
-                    <input type="text" id="memoryLimit" name="memoryLimit" th:value="${problem.memoryLimit}" required>
+                <div>
+                    <label for="memoryLimit" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Memory Limit (MB)</label>
+                    <input type="text" id="memoryLimit" name="memoryLimit" th:value="${problem.memoryLimit}" required
+                           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors">
                 </div>
             </div>
 
-            <h3 class="mt-2 mb-1">Manage Test Cases</h3>
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-white pt-4 border-t border-gray-200 dark:border-gray-700">Manage Test Cases</h3>
 
             <!-- Existing Test Cases -->
-            <div th:if="${!testCases.isEmpty()}" class="mb-2">
-                <h4 class="mb-1" style="font-size: 1rem; color: #666;">Existing Test Cases</h4>
-                <div th:each="tc : ${testCases}" class="test-case-item">
+            <div th:if="${!testCases.isEmpty()}" class="space-y-3">
+                <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400">Existing Test Cases</h4>
+                <div th:each="tc : ${testCases}" class="flex items-center justify-between bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
                     <div>
-                        <span class="test-case-label" th:text="${tc.example ? 'Sample Case' : 'Hidden Case'}">Case</span>
-                        <span style="color: #888; font-size: 0.9rem; margin-left: 10px;">(ID: <span th:text="${tc.id}">1</span>)</span>
-                        <div style="font-size: 0.85rem; color: #555; margin-top: 5px; white-space: pre-wrap; max-height: 50px; overflow: hidden; text-overflow: ellipsis;" th:text="'Input: ' + ${tc.input}">Input Preview</div>
+                        <span class="text-sm font-medium" 
+                              th:classappend="${tc.example ? 'text-green-600 dark:text-green-400' : 'text-orange-600 dark:text-orange-400'}"
+                              th:text="${tc.example ? 'Sample Case' : 'Hidden Case'}">Case</span>
+                        <span class="text-xs text-gray-500 dark:text-gray-400 ml-2">(ID: <span th:text="${tc.id}">1</span>)</span>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate max-w-md" th:text="'Input: ' + ${tc.input}">Input Preview</p>
                     </div>
-                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; color: #c62828;">
-                        <input type="checkbox" name="deleteTestCaseIds" th:value="${tc.id}"> Delete
+                    <label class="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm cursor-pointer hover:text-red-800 dark:hover:text-red-300 transition-colors">
+                        <input type="checkbox" name="deleteTestCaseIds" th:value="${tc.id}" class="rounded border-gray-300 text-red-600 focus:ring-red-500">
+                        Delete
                     </label>
                 </div>
             </div>
 
             <!-- New Test Cases -->
-            <h4 class="mb-1" style="font-size: 1rem; color: #666;">Add New Test Cases</h4>
-            <div id="hidden-cases-container">
-                <!-- Dynamic rows go here -->
+            <div class="pt-4">
+                <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">Add New Test Cases</h4>
+                <div id="hidden-cases-container" class="space-y-4">
+                    <!-- Dynamic rows go here -->
+                </div>
+                
+                <button type="button" onclick="addHiddenCase()" 
+                        class="text-primary hover:text-primary-dark font-medium transition-colors mt-4">
+                    + Add New Test Case
+                </button>
             </div>
-            
-            <button type="button" class="btn-add mb-1" onclick="addHiddenCase()">+ Add New Test Case</button>
 
-            <button type="submit" class="btn-submit">Save Changes</button>
-            <a href="/admin" class="link-cancel">Cancel</a>
+            <div class="flex gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <button type="submit" 
+                        class="flex-1 bg-primary hover:bg-primary-dark text-white font-semibold py-3 rounded-lg transition-colors duration-200">
+                    Save Changes
+                </button>
+                <a href="/admin" 
+                   class="px-6 py-3 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 font-medium transition-colors">
+                    Cancel
+                </a>
+            </div>
         </form>
     </div>
 
+    <th:block th:replace="~{fragments/darkmode :: darkModeScript}" />
     <script>
         function addHiddenCase() {
             const container = document.getElementById('hidden-cases-container');
             const index = container.children.length + 1;
             
             const div = document.createElement('div');
-            div.className = 'test-case-group';
+            div.className = 'bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4';
             div.innerHTML = `
-                <span class="test-case-title">New Case #${index}</span>
-                <button type="button" class="btn-remove" onclick="this.parentElement.remove()">Remove</button>
-                <div class="file-row">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-sm font-medium text-orange-600 dark:text-orange-400">New Case #${index}</span>
+                    <button type="button" onclick="this.parentElement.parentElement.remove()" 
+                            class="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium transition-colors">
+                        Remove
+                    </button>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label>Input File (.in)</label>
-                        <input type="file" name="newInputs" accept=".in" required>
+                        <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Input File (.in)</label>
+                        <input type="file" name="newInputs" accept=".in" required
+                               class="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-sm file:bg-gray-200 dark:file:bg-gray-600 file:text-gray-700 dark:file:text-gray-200 hover:file:bg-gray-300 dark:hover:file:bg-gray-500 file:cursor-pointer file:transition-colors">
                     </div>
                     <div>
-                        <label>Output File (.out)</label>
-                        <input type="file" name="newOutputs" accept=".out" required>
+                        <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Output File (.out)</label>
+                        <input type="file" name="newOutputs" accept=".out" required
+                               class="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-sm file:bg-gray-200 dark:file:bg-gray-600 file:text-gray-700 dark:file:text-gray-200 hover:file:bg-gray-300 dark:hover:file:bg-gray-500 file:cursor-pointer file:transition-colors">
                     </div>
                 </div>
             `;

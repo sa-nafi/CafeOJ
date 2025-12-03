@@ -40,20 +40,17 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         const data = await response.json();
 
         if (response.ok) {
-            messageDiv.className = 'message success';
+            messageDiv.className = 'mt-4 text-center text-sm px-4 py-2 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400';
             messageDiv.textContent = data.message;
-            messageDiv.style.display = 'block';
             setTimeout(() => {
                 window.location.href = '/login';
             }, 2000);
         } else {
-            messageDiv.className = 'message error';
+            messageDiv.className = 'mt-4 text-center text-sm px-4 py-2 rounded-lg bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400';
             messageDiv.textContent = data.error;
-            messageDiv.style.display = 'block';
         }
     } catch (error) {
-        messageDiv.className = 'message error';
+        messageDiv.className = 'mt-4 text-center text-sm px-4 py-2 rounded-lg bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400';
         messageDiv.textContent = 'An error occurred. Please try again.';
-        messageDiv.style.display = 'block';
     }
 });
